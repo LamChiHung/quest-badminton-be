@@ -7,11 +7,8 @@ import com.quest.badminton.service.dto.response.LoginResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/common/auth")
@@ -37,6 +34,13 @@ public class AuthCommonController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("/register/confirm")
+    public ResponseEntity<Void> confirmRegister(@RequestParam("token") String token)
+    {
+        authService.activeToken(token);
+        return ResponseEntity.noContent().build();
     }
 
 }
