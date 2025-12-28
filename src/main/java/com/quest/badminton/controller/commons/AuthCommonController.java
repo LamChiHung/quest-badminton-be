@@ -20,8 +20,10 @@ public class AuthCommonController {
     private final AuthService authService;
 
     @GetMapping("/welcome")
-    public ResponseEntity<String> welcome() {
-        return ResponseEntity.ok("Welcome to Badminton API");
+    public ResponseEntity<LoginResponseDto> welcome() {
+        return ResponseEntity.ok(LoginResponseDto.builder()
+                .token("Welcome")
+                .build());
     }
 
 

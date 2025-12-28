@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.quest.badminton.constant.ErrorConstants.ERR_INTERNAL_SERVER;
+import static com.quest.badminton.constant.ErrorConstants.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -15,11 +15,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity <ErrorResponse> handleAccessDenied(BadRequestException ex) {
+        String errorMessage = getErrorMessage(ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.builder()
                         .errorCode(ex.getMessage())
-                        .errorMessage(ex.getMessage())
+                        .errorMessage(errorMessage)
                         .status(HttpStatus.BAD_REQUEST.value())
                         .build());
     }
@@ -27,12 +28,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity <ErrorResponse> handleAccessDenied(Exception ex) {
         log.error(ex.getMessage(), ex);
+        String errorMessage = getErrorMessage(ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.builder()
                         .errorCode(ERR_INTERNAL_SERVER)
-                        .errorMessage(ERR_INTERNAL_SERVER)
+                        .errorMessage(errorMessage)
                         .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .build());
+    }
+
+
+    private String getErrorMessage(String errorCode) {
+        return switch (errorCode) {
+            case ERR_EMAIL_EXISTED -> "Email đã tồn tại";
+            case ERR_USER_INACTIVE -> "Tài khoản chưa kích hoạt";
+            case ERR_USER_NOT_FOUND -> "Tài khoản không tìm thấy";
+            case ERR_CREDENTIALS_INVALID -> "Thông tin xác thực không chính xác";
+            default -> "Có lỗi xảy ra";
+        };
     }
 }

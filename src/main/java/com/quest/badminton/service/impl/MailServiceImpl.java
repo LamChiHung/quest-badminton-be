@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -19,6 +20,12 @@ import java.util.Objects;
 public class MailServiceImpl implements MailService {
     private final JavaMailSender mailSender;
     private final MailTemplateRepository mailTemplateRepository;
+
+    @Async
+    @Override
+    public void sendAsync(String to, String key, Map<String, String> subjectParams, Map<String, String> messageParams) {
+        send(to, key, subjectParams, messageParams);
+    }
 
     @Override
     public void send(String to, String key, Map<String, String> subjectParams ,Map<String, String> messageParams) {
