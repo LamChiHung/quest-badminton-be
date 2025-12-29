@@ -70,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
         Map<String, String> messageParams = new HashMap <>();
         messageParams.put(MailConstants.NAME, request.getName());
         messageParams.put(MailConstants.URL, url);
-        mailService.send(request.getEmail(), "register", null, messageParams);
+        mailService.sendAsync(request.getEmail(), "register", null, messageParams);
     }
 
     @Override
