@@ -24,4 +24,8 @@
     <changeSet id="20251224160000-02" author="hunglc">
         <sqlFile path="db/sql/20251228210000-add-register-mail-template.sql"/>
     </changeSet>
+    <changeSet id="20251224160000-03" author="hunglc">
+        <addUniqueConstraint tableName="m_mail_templates" columnNames="key"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -41,5 +41,8 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="20251224120000-04" author="hunglc">
+        <addUniqueConstraint tableName="t_users" columnNames="email" />
+    </changeSet>
 
 </databaseChangeLog>

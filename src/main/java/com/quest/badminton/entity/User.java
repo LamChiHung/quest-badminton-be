@@ -1,19 +1,14 @@
 package com.quest.badminton.entity;
 
 import com.quest.badminton.entity.enumaration.Club;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -49,4 +44,7 @@ public class User {
 
     @Column(name = "register_token")
     private String registerToken;
+
+    @OneToMany(mappedBy = "user")
+    private List<Player> players;
 }

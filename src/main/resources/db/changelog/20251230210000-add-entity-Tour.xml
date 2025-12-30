@@ -1,0 +1,52 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+      http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd"
+>
+    <changeSet id="20251230210000-01" author="hunglc">
+        <createTable tableName="t_tours">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="male_players" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="female_players" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="registration_end_date" type="timestamp(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="location" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="location_url" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rule_url" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="20251230210000-02" author="hunglc">
+        <addUniqueConstraint tableName="t_tours" columnNames="code"/>
+    </changeSet>
+
+</databaseChangeLog>

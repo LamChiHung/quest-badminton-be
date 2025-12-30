@@ -7,4 +7,7 @@
 >
     <include file="db/changelog/20251224120000-add-entity-User.xml" />
     <include file="db/changelog/20251224160000-add-entity-MailTemplate.xml" />
+    <include file="db/changelog/20251230210000-add-entity-Tour.xml" />
+    <include file="db/changelog/20251230211000-add-entity-Team.xml" />
+    <include file="db/changelog/20251230212000-add-entity-Player.xml" />
 </databaseChangeLog>

@@ -1,0 +1,67 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+      http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd"
+>
+    <changeSet id="20251230212000-01" author="hunglc">
+        <createTable tableName="t_players">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fk_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_tour_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_team_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="tier" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note" type="varchar(500)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="approved_by" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="rejected_by" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="20251230212000-02" author="hunglc">
+        <addForeignKeyConstraint baseTableName="t_players"
+                                 baseColumnNames="fk_user_id"
+                                 constraintName="fk_t_users_id"
+                                 referencedTableName="t_users"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="t_players"
+                                 baseColumnNames="fk_tour_id"
+                                 constraintName="fk_t_tours_id"
+                                 referencedTableName="t_tours"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="t_players"
+                                 baseColumnNames="fk_team_id"
+                                 constraintName="fk_t_teams_id"
+                                 referencedTableName="t_teams"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="20251230212000-03" author="hunglc">
+        <createIndex tableName="t_players" indexName="idx_t_players_fk_user_id">
+            <column name="fk_user_id" type="bigint"/>
+        </createIndex>
+        <createIndex tableName="t_players" indexName="idx_t_players_fk_tour_id">
+            <column name="fk_tour_id" type="bigint"/>
+        </createIndex>
+        <createIndex tableName="t_players" indexName="idx_t_players_fk_team_id">
+            <column name="fk_team_id" type="bigint"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
