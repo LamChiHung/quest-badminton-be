@@ -1,0 +1,98 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+      http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.23.xsd"
+>
+    <changeSet id="20251230215000-01" author="hunglc">
+        <createTable tableName="t_matches">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fk_player_pair_id_1" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_player_pair_id_2" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_tour_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_group_match_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score_1" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score_2" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fk_serve_player_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="fk_receive_player_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="fk_winner_player_pair_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="fk_referee_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="20251230215000-02" author="hunglc">
+        <addForeignKeyConstraint baseTableName="t_matches"
+                                 baseColumnNames="fk_player_pair_id_1"
+                                 constraintName="fk_t_player_pairs_id_1"
+                                 referencedTableName="t_player_pairs"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="t_matches"
+                                 baseColumnNames="fk_player_pair_id_2"
+                                 constraintName="fk_t_player_pairs_id_2"
+                                 referencedTableName="t_player_pairs"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="t_matches"
+                                 baseColumnNames="fk_tour_id"
+                                 constraintName="fk_t_tours_id"
+                                 referencedTableName="t_tours"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="t_matches"
+                                 baseColumnNames="fk_group_match_id"
+                                 constraintName="fk_t_group_matches_id"
+                                 referencedTableName="t_group_matches"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="t_matches"
+                                 baseColumnNames="fk_serve_player_id"
+                                 constraintName="fk_serve_player_id"
+                                 referencedTableName="t_players"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="t_matches"
+                                 baseColumnNames="fk_receive_player_id"
+                                 constraintName="fk_receive_player_id"
+                                 referencedTableName="t_players"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="t_matches"
+                                 baseColumnNames="fk_winner_player_pair_id"
+                                 constraintName="fk_winner_player_pair_id"
+                                 referencedTableName="t_player_pairs"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="t_matches"
+                                 baseColumnNames="fk_referee_id"
+                                 constraintName="fk_referee_id"
+                                 referencedTableName="t_referees"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    <changeSet id="20251230215000-03" author="hunglc">
+        <createIndex tableName="t_matches" indexName="idx_t_matches_fk_tour_id">
+            <column name="fk_tour_id" type="bigint"/>
+        </createIndex>
+        <createIndex tableName="t_matches" indexName="idx_t_matches_fk_group_match_id">
+            <column name="fk_group_match_id" type="bigint"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

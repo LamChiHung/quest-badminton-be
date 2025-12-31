@@ -10,4 +10,9 @@
     <include file="db/changelog/20251230210000-add-entity-Tour.xml" />
     <include file="db/changelog/20251230211000-add-entity-Team.xml" />
     <include file="db/changelog/20251230212000-add-entity-Player.xml" />
+    <include file="db/changelog/20251230212100-add-entity-Referee.xml" />
+    <include file="db/changelog/20251230213000-add-entity-PlayerPair.xml" />
+    <include file="db/changelog/20251230214000-add-entity-GroupMatch.xml" />
+    <include file="db/changelog/20251230215000-add-entity-Match.xml" />
+    <include file="db/changelog/20251230216000-add-entity-MatchHistory.xml" />
 </databaseChangeLog>

@@ -48,5 +48,12 @@
     <changeSet id="20251230210000-02" author="hunglc">
         <addUniqueConstraint tableName="t_tours" columnNames="code"/>
     </changeSet>
+    <changeSet id="20251230210000-03" author="hunglc">
+        <addColumn tableName="t_tours">
+            <column name="is_private" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>
