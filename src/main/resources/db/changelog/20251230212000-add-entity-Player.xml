@@ -64,4 +64,11 @@
             <column name="fk_team_id" type="bigint"/>
         </createIndex>
     </changeSet>
+    <changeSet id="20251230212000-04" author="hunglc">
+        <addColumn tableName="t_players">
+            <column name="gender" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

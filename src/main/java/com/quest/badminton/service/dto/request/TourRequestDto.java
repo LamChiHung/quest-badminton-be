@@ -1,6 +1,7 @@
 package com.quest.badminton.service.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.quest.badminton.entity.enumaration.TourMatchType;
 import com.quest.badminton.entity.enumaration.TourType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -30,6 +31,9 @@ public class TourRequestDto {
 
     @NotNull
     private TourType type;
+
+    @NotNull
+    private TourMatchType matchType;
 
     @NotNull
     private Instant startDate;

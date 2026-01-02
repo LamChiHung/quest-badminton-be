@@ -1,10 +1,21 @@
 package com.quest.badminton.service.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.quest.badminton.entity.enumaration.TourMatchType;
 import com.quest.badminton.entity.enumaration.TourStatus;
 import com.quest.badminton.entity.enumaration.TourType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TourResponseDto {
     private Long id;
 
@@ -16,13 +27,15 @@ public class TourResponseDto {
 
     private Integer malePlayers;
 
-    private Integer malePlayerRegisted;
+    private Integer malePlayerRegistered;
 
     private Integer femalePlayers;
 
-    private Integer femalePlayerRegisted;
+    private Integer femalePlayerRegistered;
 
     private TourType type;
+
+    private TourMatchType matchType;
 
     private Instant startDate;
 
@@ -33,5 +46,7 @@ public class TourResponseDto {
     private String locationUrl;
 
     private String ruleUrl;
+
+    private Integer pendingApprovePlayers;
 
 }

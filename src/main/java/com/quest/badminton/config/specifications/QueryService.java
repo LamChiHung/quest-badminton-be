@@ -328,7 +328,7 @@ public abstract class QueryService<ENTITY> {
         } else if (filter.getIn() != null) {
             return valueIn(fused, filter.getIn());
         }
-        Specification<ENTITY> result = Specification.where(null);
+        Specification<ENTITY> result = Specification.anyOf();
         if (filter.getSpecified() != null) {
             // Interestingly, 'functionToEntity' doesn't work, we need the longer lambda formula
             result = result.and(byFieldSpecified(root -> functionToEntity.apply(root), filter.getSpecified()));

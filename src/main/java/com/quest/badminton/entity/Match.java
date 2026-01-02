@@ -70,4 +70,8 @@ public class Match {
     @JoinColumn(name = "fk_referee_id", referencedColumnName = "id")
     @ManyToOne
     private Referee referee;
+
+    @ManyToOne
+    @JoinColumn(name = "fk_parent_match_id", referencedColumnName = "id")
+    private Match parentMatch;
 }

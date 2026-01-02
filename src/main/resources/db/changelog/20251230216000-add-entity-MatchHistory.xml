@@ -11,10 +11,10 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="fk_player_pair_id_1" type="bigint">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="fk_player_pair_id_2" type="bigint">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="fk_tour_id" type="bigint">
                 <constraints nullable="false"/>
@@ -99,5 +99,12 @@
         <createIndex tableName="t_matches_history" indexName="idx_t_matches_history_fk_match_id">
             <column name="fk_match_id" type="bigint"/>
         </createIndex>
+    </changeSet>
+    <changeSet id="20251230215000-04" author="hunglc">
+        <addColumn tableName="t_matches_history">
+            <column name="fk_parent_match_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

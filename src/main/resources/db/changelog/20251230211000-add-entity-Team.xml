@@ -33,4 +33,12 @@
             <column name="fk_tour_id"/>
         </createIndex>
     </changeSet>
+    <changeSet id="20251230211000-04" author="hunglc">
+        <addColumn tableName="t_teams">
+            <column name="fk_captain_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

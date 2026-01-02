@@ -1,5 +1,6 @@
 package com.quest.badminton.entity;
 
+import com.quest.badminton.entity.enumaration.TourMatchType;
 import com.quest.badminton.entity.enumaration.TourStatus;
 import com.quest.badminton.entity.enumaration.TourType;
 import jakarta.persistence.Column;
@@ -52,6 +53,10 @@ public class Tour {
     @Enumerated(EnumType.STRING)
     private TourType type;
 
+    @Column(name = "match_type")
+    @Enumerated(EnumType.STRING)
+    private TourMatchType matchType;
+
     @Column(name = "start_date")
     private Instant startDate;
 
@@ -72,6 +77,9 @@ public class Tour {
 
     @OneToMany(mappedBy = "tour")
     private List<Player> players;
+
+    @OneToMany(mappedBy = "tour")
+    private List<Referee> referees;
 
     @Column(name = "is_private")
     @Builder.Default

@@ -55,5 +55,11 @@
             </column>
         </addColumn>
     </changeSet>
-
+    <changeSet id="20251230210000-04" author="hunglc">
+        <addColumn tableName="t_tours">
+            <column name="match_type" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -1,4 +1,5 @@
 package com.quest.badminton.entity;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,8 @@ public class UserInfoDetails implements UserDetails {
     private String password;
     private List<GrantedAuthority> authorities;
     private boolean enabled;
+    @Getter
+    private Long id;
 
     public UserInfoDetails(User userInfo) {
         this.username = userInfo.getEmail();
@@ -21,6 +24,7 @@ public class UserInfoDetails implements UserDetails {
                 .map(SimpleGrantedAuthority ::new)
                 .collect(Collectors.toList());
         this.enabled = userInfo.isEnabled();
+        this.id = userInfo.getId();
     }
 
     @Override
