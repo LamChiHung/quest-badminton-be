@@ -7,24 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.quest.badminton.constant.ErrorConstants.ERR_CREDENTIALS_INVALID;
-import static com.quest.badminton.constant.ErrorConstants.ERR_EMAIL_EXISTED;
-import static com.quest.badminton.constant.ErrorConstants.ERR_FEMALE_PLAYER_FULL;
-import static com.quest.badminton.constant.ErrorConstants.ERR_INTERNAL_SERVER;
-import static com.quest.badminton.constant.ErrorConstants.ERR_MALE_PLAYER_FULL;
-import static com.quest.badminton.constant.ErrorConstants.ERR_PLAYER_BANNED;
-import static com.quest.badminton.constant.ErrorConstants.ERR_PLAYER_NOT_FOUND;
-import static com.quest.badminton.constant.ErrorConstants.ERR_PLAYER_NOT_IN_TEAM;
-import static com.quest.badminton.constant.ErrorConstants.ERR_PLAYER_NOT_IN_TOUR;
-import static com.quest.badminton.constant.ErrorConstants.ERR_PLAYER_PAIR_EXISTS;
-import static com.quest.badminton.constant.ErrorConstants.ERR_PLAYER_REGISTRATION_APPROVED;
-import static com.quest.badminton.constant.ErrorConstants.ERR_PLAYER_REGISTRATION_PENDING_APPROVE;
-import static com.quest.badminton.constant.ErrorConstants.ERR_TEAM_NAME_EXISTS;
-import static com.quest.badminton.constant.ErrorConstants.ERR_TEAM_NOT_FOUND;
-import static com.quest.badminton.constant.ErrorConstants.ERR_TOUR_NOT_FOUND;
-import static com.quest.badminton.constant.ErrorConstants.ERR_USER_INACTIVE;
-import static com.quest.badminton.constant.ErrorConstants.ERR_USER_NOT_FOUND;
-import static com.quest.badminton.constant.ErrorConstants.ERR_USER_REGISTERED_REFEREE;
+import static com.quest.badminton.constant.ErrorConstants.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -67,6 +50,8 @@ public class GlobalExceptionHandler {
             case ERR_PLAYER_REGISTRATION_APPROVED -> "Đã tham gia vào giải đấu";
             case ERR_PLAYER_BANNED -> "Đã bị cấm trong giải đấu";
             case ERR_TOUR_NOT_FOUND -> "Không tìm thấy giải đấu";
+            case ERR_GROUP_MATCH_NOT_FOUND -> "Không tìm thấy vòng đấu";
+            case ERR_GROUP_MATCH_NOT_IN_TOUR -> "Vòng đấu không có trong giải đấu";
             case ERR_PLAYER_NOT_FOUND -> "Không tìm thấy vận động viên";
             case ERR_MALE_PLAYER_FULL -> "Đã hết số lượng thành viên nam trong giải đấu";
             case ERR_FEMALE_PLAYER_FULL -> "Đã hết số lượng thành viên nữ trong giải đấu";
@@ -75,6 +60,8 @@ public class GlobalExceptionHandler {
             case ERR_PLAYER_NOT_IN_TOUR -> "Vận động viên không có trong giải đấu";
             case ERR_PLAYER_NOT_IN_TEAM -> "Vận động viên không có trong Team";
             case ERR_PLAYER_PAIR_EXISTS -> "Cặp đấu đã tồn tại";
+            case ERR_PLAYER_PAIR_NOT_FOUND -> "Không tìm thấy cặp đấu";
+            case ERR_PLAYER_PAIR_NOT_IN_TOUR -> "Cặp đấu không có trong giải đấu";
             default -> "Có lỗi xảy ra";
         };
     }

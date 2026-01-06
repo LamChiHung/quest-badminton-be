@@ -1,15 +1,12 @@
 package com.quest.badminton.controller.privates;
 
+import com.quest.badminton.entity.Match;
 import com.quest.badminton.service.PlayerQueryService;
 import com.quest.badminton.service.TourQueryService;
 import com.quest.badminton.service.TourService;
 import com.quest.badminton.service.dto.criteria.PlayerCriteria;
 import com.quest.badminton.service.dto.criteria.TourCriteria;
-import com.quest.badminton.service.dto.request.AddPlayerToTeamRequestDto;
-import com.quest.badminton.service.dto.request.ApprovePlayerRequestDto;
-import com.quest.badminton.service.dto.request.GroupMatchRequestDto;
-import com.quest.badminton.service.dto.request.TeamRequestDto;
-import com.quest.badminton.service.dto.request.TourRequestDto;
+import com.quest.badminton.service.dto.request.*;
 import com.quest.badminton.service.dto.response.PlayerResponseDto;
 import com.quest.badminton.service.dto.response.TourResponseDto;
 import com.quest.badminton.util.SecurityUtil;
@@ -75,9 +72,15 @@ public class TourPrivateController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/group-match")
+    @PostMapping("/group-matchs")
     public ResponseEntity<Void> createGroupMatch(@Valid @RequestBody GroupMatchRequestDto request) {
         tourService.createGroupMatch(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/matchs")
+    public ResponseEntity<Void> createMatch(@Valid @RequestBody MatchRequestDto request) {
+        tourService.createMatch(request);
         return ResponseEntity.noContent().build();
     }
 }

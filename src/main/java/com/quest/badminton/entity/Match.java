@@ -46,14 +46,16 @@ public class Match {
     private Tour tour;
 
     @Column(name = "score_1")
-    private Integer score1;
+    @Builder.Default
+    private Integer score1 = 0;
 
     @Column(name = "score_2")
-    private Integer score2;
+    @Builder.Default
+    private Integer score2 = 0;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private MatchStatus status;
+    private MatchStatus status = MatchStatus.UPCOMING;
 
     @JoinColumn(name = "fk_serve_player_id", referencedColumnName = "id")
     @ManyToOne

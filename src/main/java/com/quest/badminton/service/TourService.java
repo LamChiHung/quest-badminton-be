@@ -1,12 +1,6 @@
 package com.quest.badminton.service;
 
-import com.quest.badminton.service.dto.request.AddPlayerToTeamRequestDto;
-import com.quest.badminton.service.dto.request.ApprovePlayerRequestDto;
-import com.quest.badminton.service.dto.request.GroupMatchRequestDto;
-import com.quest.badminton.service.dto.request.RegisterPlayerPairRequestDto;
-import com.quest.badminton.service.dto.request.RegisterTourPlayerRequestDto;
-import com.quest.badminton.service.dto.request.TeamRequestDto;
-import com.quest.badminton.service.dto.request.TourRequestDto;
+import com.quest.badminton.service.dto.request.*;
 import com.quest.badminton.service.dto.response.CheckTourRoleResponseDto;
 
 public interface TourService {
@@ -25,4 +19,6 @@ public interface TourService {
     void approvePlayer(ApprovePlayerRequestDto request, Long hostId);
 
     void createGroupMatch(GroupMatchRequestDto request);
+
+    void createMatch(MatchRequestDto request);
 }
