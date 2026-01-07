@@ -5,6 +5,7 @@ public class ErrorConstants {
     public static final String ERR_EMAIL_EXISTED = "error.email.existed";
     public static final String ERR_CREDENTIALS_INVALID = "error.credentials.invalid";
     public static final String ERR_USER_INACTIVE = "error.user.inactive";
+    public static final String ERR_USER_MUST_LOGIN = "error.user.must-login";
     public static final String ERR_USER_NOT_FOUND = "error.user.not-found";
 
     public static final String ERR_USER_REGISTERED_REFEREE = "error.user.registered-referee";

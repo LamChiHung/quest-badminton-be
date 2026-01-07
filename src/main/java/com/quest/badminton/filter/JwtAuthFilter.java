@@ -1,12 +1,16 @@
 package com.quest.badminton.filter;
 
+import com.quest.badminton.constant.ErrorConstants;
+import com.quest.badminton.controller.handler.ErrorResponse;
 import com.quest.badminton.entity.UserInfoDetails;
+import com.quest.badminton.util.JsonUtil;
 import com.quest.badminton.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +22,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtService;
@@ -50,7 +55,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (!request.getRequestURI().contains("/api/common/") && !isAuthenticated)
         {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized");
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .status(HttpServletResponse.SC_UNAUTHORIZED)
+                    .errorCode(ErrorConstants.ERR_USER_MUST_LOGIN)
+                    .errorMessage("Vui lòng đăng nhập")
+                    .build();
+            String errorResponseString = JsonUtil.toJson(errorResponse);
+            log.info(errorResponseString);
+            response.getWriter().write(errorResponseString);
             return;
         }
 
