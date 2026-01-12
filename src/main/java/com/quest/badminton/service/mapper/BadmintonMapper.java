@@ -37,6 +37,7 @@ public class BadmintonMapper {
                 .femalePlayers(entity.getFemalePlayers())
                 .femalePlayerRegistered(femaleRegistered)
                 .type(entity.getType())
+                .matchType(entity.getMatchType())
                 .startDate(entity.getStartDate())
                 .registrationEndDate(entity.getRegistrationEndDate())
                 .location(entity.getLocation())

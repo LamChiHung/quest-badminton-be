@@ -62,6 +62,10 @@ public class TourQueryServiceImpl extends QueryService <Tour> implements TourQue
             spec = spec.and(buildSpecification(criteria.getId(), Tour_.id));
         }
 
+        if (criteria.getCode() != null) {
+            spec = spec.and(buildStringSpecification(criteria.getCode(), Tour_.code));
+        }
+
         if (criteria.getStatus() != null) {
             spec = spec.and(buildSpecification(criteria.getStatus(), Tour_.status));
         }

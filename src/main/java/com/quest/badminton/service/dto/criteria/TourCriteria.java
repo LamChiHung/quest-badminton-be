@@ -22,6 +22,7 @@ public class TourCriteria implements Serializable, Criteria {
 
     private LongFilter id;
     private StringFilter name;
+    private StringFilter code;
     private InstantFilter fromStartDate;
     private InstantFilter toStartDate;
     private StringFilter location;

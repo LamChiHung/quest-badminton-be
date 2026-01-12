@@ -23,10 +23,10 @@ public class TourRequestDto {
     @NotBlank
     private String name;
 
-    @Min(1)
+    @Min(0)
     private Integer malePlayers;
 
-    @Min(1)
+    @Min(0)
     private Integer femalePlayers;
 
     @NotNull

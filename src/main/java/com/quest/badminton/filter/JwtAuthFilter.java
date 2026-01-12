@@ -29,43 +29,53 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-        String token = null;
-        String username = null;
+        try {
+            String authHeader = request.getHeader("Authorization");
+            String token = null;
+            String username = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7);
-            username = jwtService.extractUsername(token);
-        }
-
-        boolean isAuthenticated = false;
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserInfoDetails userDetails = (UserInfoDetails) userDetailsService.loadUserByUsername(username);
-            if (jwtService.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-                isAuthenticated = true;
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                token = authHeader.substring(7);
+                username = jwtService.extractUsername(token);
             }
-        }
 
-        if (!request.getRequestURI().contains("/api/common/") && !isAuthenticated)
-        {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            ErrorResponse errorResponse = ErrorResponse.builder()
-                    .status(HttpServletResponse.SC_UNAUTHORIZED)
-                    .errorCode(ErrorConstants.ERR_USER_MUST_LOGIN)
-                    .errorMessage("Vui lòng đăng nhập")
-                    .build();
-            String errorResponseString = JsonUtil.toJson(errorResponse);
-            log.info(errorResponseString);
-            response.getWriter().write(errorResponseString);
+            boolean isAuthenticated = false;
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserInfoDetails userDetails = (UserInfoDetails) userDetailsService.loadUserByUsername(username);
+                if (jwtService.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    isAuthenticated = true;
+                }
+            }
+
+            if (!request.getRequestURI().contains("/api/common/") && !isAuthenticated)
+            {
+                returnUnauthorized(response);
+                return;
+            }
+
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            returnUnauthorized(response);
             return;
         }
+    }
 
-        filterChain.doFilter(request, response);
+    private void returnUnauthorized(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpServletResponse.SC_UNAUTHORIZED)
+                .errorCode(ErrorConstants.ERR_USER_MUST_LOGIN)
+                .errorMessage("Vui lòng đăng nhập")
+                .build();
+        String errorResponseString = JsonUtil.toJson(errorResponse);
+        log.info(errorResponseString);
+        response.getWriter().write(errorResponseString);
+        return;
     }
 }

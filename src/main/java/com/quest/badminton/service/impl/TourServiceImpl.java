@@ -1,7 +1,14 @@
 package com.quest.badminton.service.impl;
 
 import com.quest.badminton.constant.ErrorConstants;
-import com.quest.badminton.entity.*;
+import com.quest.badminton.entity.GroupMatch;
+import com.quest.badminton.entity.Match;
+import com.quest.badminton.entity.Player;
+import com.quest.badminton.entity.PlayerPair;
+import com.quest.badminton.entity.Referee;
+import com.quest.badminton.entity.Team;
+import com.quest.badminton.entity.Tour;
+import com.quest.badminton.entity.User;
 import com.quest.badminton.entity.enumaration.Gender;
 import com.quest.badminton.entity.enumaration.PlayerPairType;
 import com.quest.badminton.entity.enumaration.PlayerStatus;
@@ -9,9 +16,23 @@ import com.quest.badminton.entity.enumaration.PlayerTier;
 import com.quest.badminton.entity.enumaration.TourRole;
 import com.quest.badminton.entity.enumaration.TourStatus;
 import com.quest.badminton.exception.BadRequestException;
-import com.quest.badminton.repository.*;
+import com.quest.badminton.repository.GroupMatchRepository;
+import com.quest.badminton.repository.MatchRepository;
+import com.quest.badminton.repository.PlayerPairRepository;
+import com.quest.badminton.repository.PlayerRepository;
+import com.quest.badminton.repository.RefereeRepository;
+import com.quest.badminton.repository.TeamRepository;
+import com.quest.badminton.repository.TourRepository;
+import com.quest.badminton.repository.UserRepository;
 import com.quest.badminton.service.TourService;
-import com.quest.badminton.service.dto.request.*;
+import com.quest.badminton.service.dto.request.AddPlayerToTeamRequestDto;
+import com.quest.badminton.service.dto.request.ApprovePlayerRequestDto;
+import com.quest.badminton.service.dto.request.GroupMatchRequestDto;
+import com.quest.badminton.service.dto.request.MatchRequestDto;
+import com.quest.badminton.service.dto.request.RegisterPlayerPairRequestDto;
+import com.quest.badminton.service.dto.request.RegisterTourPlayerRequestDto;
+import com.quest.badminton.service.dto.request.TeamRequestDto;
+import com.quest.badminton.service.dto.request.TourRequestDto;
 import com.quest.badminton.service.dto.response.CheckTourRoleResponseDto;
 import com.quest.badminton.util.CodeUtil;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +72,7 @@ public class TourServiceImpl implements TourService {
                 .malePlayers(request.getMalePlayers())
                 .femalePlayers(request.getFemalePlayers())
                 .type(request.getType())
+                .matchType(request.getMatchType())
                 .startDate(request.getStartDate())
                 .registrationEndDate(request.getRegistrationEndDate())
                 .location(request.getLocation())
