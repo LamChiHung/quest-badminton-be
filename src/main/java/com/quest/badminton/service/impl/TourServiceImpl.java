@@ -79,6 +79,8 @@ public class TourServiceImpl implements TourService {
                 .locationUrl(request.getLocationUrl())
                 .ruleUrl(request.getRuleUrl())
                 .isPrivate(request.getIsPrivate())
+                .backgroundUrl(request.getBackgroundUrl())
+                .avatarUrl(request.getAvatarUrl())
                 .build());
     }
 

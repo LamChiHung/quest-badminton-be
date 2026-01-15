@@ -63,6 +63,12 @@ public class Tour {
     @Column(name = "registration_end_date")
     private Instant registrationEndDate;
 
+    @Column(name = "background_url")
+    private String backgroundUrl;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
     @Column(name = "location")
     private String location;
 

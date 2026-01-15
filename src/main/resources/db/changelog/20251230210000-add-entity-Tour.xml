@@ -62,4 +62,14 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="20251230210000-05" author="hunglc">
+        <addColumn tableName="t_tours">
+            <column name="background_url" type="text">
+                <constraints nullable="true"/>
+            </column>
+            <column name="avatar_url" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

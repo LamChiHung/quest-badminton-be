@@ -10,6 +10,7 @@ import com.quest.badminton.service.TourQueryService;
 import com.quest.badminton.service.dto.criteria.TourCriteria;
 import com.quest.badminton.service.dto.response.TourResponseDto;
 import com.quest.badminton.service.mapper.BadmintonMapper;
+import com.quest.badminton.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,28 +28,30 @@ public class TourQueryServiceImpl extends QueryService <Tour> implements TourQue
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TourResponseDto> search(TourCriteria criteria, Pageable pageable, boolean isForAdmin) {
+    public Page<TourResponseDto> search(TourCriteria criteria, Pageable pageable, boolean isForAdmin, Long userId) {
         Specification<Tour> specification = createSpecification(criteria);
         return tourRepository.findAll(specification, pageable)
-                .map(t -> badmintonMapper.toResponseDto(t, isForAdmin));
+                .map(t -> badmintonMapper.toResponseDto(t, isForAdmin, userId));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public TourResponseDto getTour(String code, boolean isForAdmin) {
+    public TourResponseDto getTour(String code, boolean isForAdmin, Long userId) {
         return badmintonMapper.toResponseDto(
                 tourRepository.findByCode(code)
                         .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_TOUR_NOT_FOUND)),
-                isForAdmin);
+                isForAdmin,
+                userId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public TourResponseDto getTour(Long id, boolean isForAdmin) {
+    public TourResponseDto getTour(Long id, boolean isForAdmin, Long userId) {
         return badmintonMapper.toResponseDto(
                 tourRepository.findById(id)
                         .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_TOUR_NOT_FOUND)),
-                isForAdmin);
+                isForAdmin,
+                userId);
     }
 
     private Specification<Tour> createSpecification(TourCriteria criteria) {

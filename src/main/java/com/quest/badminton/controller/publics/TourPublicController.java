@@ -38,12 +38,12 @@ public class TourPublicController {
         BooleanFilter isPrivate = new BooleanFilter();
         isPrivate.setEquals(false);
         criteria.setIsPrivate(isPrivate);
-        return ResponseEntity.ok(tourQueryService.search(criteria, pageable, false));
+        return ResponseEntity.ok(tourQueryService.search(criteria, pageable, false, SecurityUtil.getCurrentUserId()));
     }
 
     @GetMapping("/{code}")
     public ResponseEntity<TourResponseDto> getTour(@PathVariable("code") String code) {
-        return ResponseEntity.ok(tourQueryService.getTour(code, false));
+        return ResponseEntity.ok(tourQueryService.getTour(code, false, SecurityUtil.getCurrentUserId()));
     }
 
     @GetMapping("/{id}/check-role")

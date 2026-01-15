@@ -41,12 +41,12 @@ public class TourPrivateController {
     @GetMapping
     public ResponseEntity<Page <TourResponseDto>> searchTour(TourCriteria criteria, @PageableDefault Pageable pageable)
     {
-        return ResponseEntity.ok(tourQueryService.search(criteria, pageable, true));
+        return ResponseEntity.ok(tourQueryService.search(criteria, pageable, true, SecurityUtil.getCurrentUserId()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TourResponseDto> getTour(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(tourQueryService.getTour(id, true));
+        return ResponseEntity.ok(tourQueryService.getTour(id, true, SecurityUtil.getCurrentUserId()));
     }
 
     @GetMapping("/players")

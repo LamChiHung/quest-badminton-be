@@ -6,25 +6,48 @@ import com.quest.badminton.entity.Tour;
 import com.quest.badminton.entity.User;
 import com.quest.badminton.entity.enumaration.Gender;
 import com.quest.badminton.entity.enumaration.PlayerStatus;
+import com.quest.badminton.entity.enumaration.TourStatus;
 import com.quest.badminton.repository.PlayerRepository;
+import com.quest.badminton.repository.UserRepository;
 import com.quest.badminton.service.dto.response.PlayerResponseDto;
 import com.quest.badminton.service.dto.response.TourResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BadmintonMapper {
     private final PlayerRepository playerRepository;
+    private final UserRepository userRepository;
 
-    public TourResponseDto toResponseDto(Tour entity, boolean isForAdmin) {
+    public TourResponseDto toResponseDto(Tour entity, boolean isForAdmin, Long userId) {
         Integer maleRegistered = playerRepository.countAllByTourIdAndGenderAndStatusIn(entity.getId(), Gender.MALE, List.of(PlayerStatus.APPROVED));
         Integer femaleRegistered = playerRepository.countAllByTourIdAndGenderAndStatusIn(entity.getId(), Gender.FEMALE, List.of(PlayerStatus.APPROVED));
         Integer pendingApprovePlayers = null;
+        boolean isAvailableToRegister = entity.getStatus().equals(TourStatus.UPCOMING);
+        if (isAvailableToRegister) {
+            isAvailableToRegister = maleRegistered < entity.getMalePlayers() || femaleRegistered < entity.getFemalePlayers();
+        }
         if (isForAdmin) {
             pendingApprovePlayers = playerRepository.countAllByTourIdAndStatusIn(entity.getId(), List.of(PlayerStatus.PENDING_APPROVE));
+        } else {
+            if (isAvailableToRegister && userId != null) {
+                List<Player> players = playerRepository.findAllByTourIdAndUserId(entity.getId(), userId)
+                        .stream()
+                        .filter(player -> {
+                            PlayerStatus status = player.getStatus();
+                            return status.equals(PlayerStatus.APPROVED) ||
+                                    status.equals(PlayerStatus.PENDING_APPROVE) ||
+                                    status.equals(PlayerStatus.BANNED);
+                        })
+                        .collect(Collectors.toList());
+                if (!players.isEmpty()) {
+                    isAvailableToRegister = false;
+                }
+            }
         }
 
         return TourResponseDto.builder()
@@ -44,6 +67,9 @@ public class BadmintonMapper {
                 .locationUrl(entity.getLocationUrl())
                 .ruleUrl(entity.getRuleUrl())
                 .pendingApprovePlayers(pendingApprovePlayers)
+                .backgroundUrl(entity.getBackgroundUrl())
+                .avatarUrl(entity.getAvatarUrl())
+                .isAvailableToRegister(isAvailableToRegister)
                 .build();
     }
 

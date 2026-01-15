@@ -53,4 +53,8 @@ public class TourRequestDto {
     @NotNull
     @Builder.Default
     private Boolean isPrivate = false;
+
+    private String backgroundUrl;
+
+    private String avatarUrl;
 }

@@ -49,4 +49,10 @@ public class TourResponseDto {
 
     private Integer pendingApprovePlayers;
 
+    private String backgroundUrl;
+
+    private String avatarUrl;
+
+    private Boolean isAvailableToRegister;
+
 }
