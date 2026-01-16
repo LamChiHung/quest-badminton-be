@@ -55,4 +55,6 @@ public class TourResponseDto {
 
     private Boolean isAvailableToRegister;
 
+    private Boolean isPrivate;
+
 }

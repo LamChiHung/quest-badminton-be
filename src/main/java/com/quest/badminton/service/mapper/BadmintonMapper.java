@@ -70,6 +70,7 @@ public class BadmintonMapper {
                 .backgroundUrl(entity.getBackgroundUrl())
                 .avatarUrl(entity.getAvatarUrl())
                 .isAvailableToRegister(isAvailableToRegister)
+                .isPrivate(entity.getIsPrivate())
                 .build();
     }
 
@@ -88,6 +89,7 @@ public class BadmintonMapper {
                 .status(entity.getStatus())
                 .gender(entity.getGender())
                 .note(entity.getNote())
+                .club(user!=null ? user.getClub() : null)
                 .build();
     }
 }

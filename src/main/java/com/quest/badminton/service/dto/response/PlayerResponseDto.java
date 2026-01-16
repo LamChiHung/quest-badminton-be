@@ -1,6 +1,7 @@
 package com.quest.badminton.service.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.quest.badminton.entity.enumaration.Club;
 import com.quest.badminton.entity.enumaration.Gender;
 import com.quest.badminton.entity.enumaration.PlayerStatus;
 import com.quest.badminton.entity.enumaration.PlayerTier;
@@ -24,6 +25,8 @@ public class PlayerResponseDto {
     private String name;
 
     private Long tourId;
+
+    private Club club;
 
     private Long teamId;
 
