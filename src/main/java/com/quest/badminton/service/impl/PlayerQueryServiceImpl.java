@@ -13,7 +13,7 @@ import com.quest.badminton.exception.BadRequestException;
 import com.quest.badminton.repository.PlayerRepository;
 import com.quest.badminton.repository.UserRepository;
 import com.quest.badminton.service.PlayerQueryService;
-import com.quest.badminton.service.dto.criteria.PlayerCriteria;
+import com.quest.badminton.service.criteria.PlayerCriteria;
 import com.quest.badminton.service.dto.response.PlayerResponseDto;
 import com.quest.badminton.service.mapper.BadmintonMapper;
 import lombok.RequiredArgsConstructor;

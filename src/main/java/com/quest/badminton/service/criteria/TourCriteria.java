@@ -1,4 +1,4 @@
-package com.quest.badminton.service.dto.criteria;
+package com.quest.badminton.service.criteria;
 
 import com.quest.badminton.config.specifications.Criteria;
 import com.quest.badminton.config.specifications.filter.BooleanFilter;

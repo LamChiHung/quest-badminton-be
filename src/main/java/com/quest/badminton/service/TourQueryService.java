@@ -1,6 +1,6 @@
 package com.quest.badminton.service;
 
-import com.quest.badminton.service.dto.criteria.TourCriteria;
+import com.quest.badminton.service.criteria.TourCriteria;
 import com.quest.badminton.service.dto.response.TourResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

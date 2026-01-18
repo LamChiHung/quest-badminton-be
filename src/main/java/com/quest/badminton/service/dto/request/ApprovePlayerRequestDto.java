@@ -20,7 +20,7 @@ public class ApprovePlayerRequestDto {
 
     @NotNull
     @Min(1)
-    private Long userId;
+    private Long playerId;
 
     private boolean isApprove;
 

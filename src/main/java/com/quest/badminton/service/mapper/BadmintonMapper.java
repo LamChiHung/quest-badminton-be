@@ -10,6 +10,7 @@ import com.quest.badminton.entity.enumaration.TourStatus;
 import com.quest.badminton.repository.PlayerRepository;
 import com.quest.badminton.repository.UserRepository;
 import com.quest.badminton.service.dto.response.PlayerResponseDto;
+import com.quest.badminton.service.dto.response.TeamResponseDto;
 import com.quest.badminton.service.dto.response.TourResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class BadmintonMapper {
     private final UserRepository userRepository;
 
     public TourResponseDto toResponseDto(Tour entity, boolean isForAdmin, Long userId) {
+        if (entity == null) return null;
         Integer maleRegistered = playerRepository.countAllByTourIdAndGenderAndStatusIn(entity.getId(), Gender.MALE, List.of(PlayerStatus.APPROVED));
         Integer femaleRegistered = playerRepository.countAllByTourIdAndGenderAndStatusIn(entity.getId(), Gender.FEMALE, List.of(PlayerStatus.APPROVED));
         Integer pendingApprovePlayers = null;
@@ -75,6 +77,7 @@ public class BadmintonMapper {
     }
 
     public PlayerResponseDto toResponseDto(Player entity, boolean isForAdmin) {
+        if (entity == null) return null;
         Team team = entity.getTeam();
         User user = entity.getUser();
         Tour tour = entity.getTour();
@@ -90,6 +93,17 @@ public class BadmintonMapper {
                 .gender(entity.getGender())
                 .note(entity.getNote())
                 .club(user!=null ? user.getClub() : null)
+                .build();
+    }
+
+    public TeamResponseDto toResponseDto(Team entity, boolean isForAdmin) {
+        if (entity == null) return null;
+        return TeamResponseDto.builder()
+                .id(entity.getId())
+                .tourId(entity.getTour().getId())
+                .number(entity.getNumber())
+                .name(entity.getName())
+                .captain(toResponseDto(entity.getCaptain(), isForAdmin))
                 .build();
     }
 }

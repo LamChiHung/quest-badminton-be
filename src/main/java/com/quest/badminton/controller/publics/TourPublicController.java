@@ -4,7 +4,7 @@ package com.quest.badminton.controller.publics;
 import com.quest.badminton.config.specifications.filter.BooleanFilter;
 import com.quest.badminton.service.TourQueryService;
 import com.quest.badminton.service.TourService;
-import com.quest.badminton.service.dto.criteria.TourCriteria;
+import com.quest.badminton.service.criteria.TourCriteria;
 import com.quest.badminton.service.dto.request.RegisterPlayerPairRequestDto;
 import com.quest.badminton.service.dto.request.RegisterTourPlayerRequestDto;
 import com.quest.badminton.service.dto.response.CheckTourRoleResponseDto;

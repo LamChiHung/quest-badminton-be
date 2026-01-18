@@ -1,13 +1,15 @@
 package com.quest.badminton.controller.privates;
 
-import com.quest.badminton.entity.Match;
 import com.quest.badminton.service.PlayerQueryService;
+import com.quest.badminton.service.TeamQueryService;
 import com.quest.badminton.service.TourQueryService;
 import com.quest.badminton.service.TourService;
-import com.quest.badminton.service.dto.criteria.PlayerCriteria;
-import com.quest.badminton.service.dto.criteria.TourCriteria;
+import com.quest.badminton.service.criteria.PlayerCriteria;
+import com.quest.badminton.service.criteria.TeamCriteria;
+import com.quest.badminton.service.criteria.TourCriteria;
 import com.quest.badminton.service.dto.request.*;
 import com.quest.badminton.service.dto.response.PlayerResponseDto;
+import com.quest.badminton.service.dto.response.TeamResponseDto;
 import com.quest.badminton.service.dto.response.TourResponseDto;
 import com.quest.badminton.util.SecurityUtil;
 import jakarta.validation.Valid;
@@ -30,6 +32,7 @@ public class TourPrivateController {
     private final TourService tourService;
     private final TourQueryService tourQueryService;
     private final PlayerQueryService playerQueryService;
+    private final TeamQueryService teamQueryService;
 
     @PostMapping
     public ResponseEntity<Void> createTour(@Valid @RequestBody TourRequestDto request)
@@ -59,6 +62,17 @@ public class TourPrivateController {
         tourService.approvePlayer(request, SecurityUtil.getCurrentUserId());
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/teams")
+    public ResponseEntity<Page<TeamResponseDto>> searchTeam(TeamCriteria criteria, @PageableDefault Pageable pageable) {
+        return ResponseEntity.ok(teamQueryService.search(criteria, pageable, true));
+    }
+
+    @GetMapping("/teams/{id}")
+    public ResponseEntity<TeamResponseDto> getTeam(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(teamQueryService.getTeam(id, true));
+    }
+
 
     @PostMapping("/teams")
     public ResponseEntity<Void> createTeam(@Valid @RequestBody TeamRequestDto request) {

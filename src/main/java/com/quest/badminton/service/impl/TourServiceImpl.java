@@ -274,12 +274,12 @@ public class TourServiceImpl implements TourService {
     @Transactional
     public void approvePlayer(ApprovePlayerRequestDto request, Long hostId) {
         Long tourId = request.getTourId();
-        Long userId = request.getUserId();
+        Long playerId = request.getPlayerId();
         String note = request.getNote();
         boolean isApprove = request.isApprove();
 
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_TOUR_NOT_FOUND));
-        Player player = playerRepository.findById(userId).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_FOUND));
+        Player player = playerRepository.findById(playerId).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_FOUND));
 
         if (!isApprove) {
             player.setStatus(PlayerStatus.REJECTED);
