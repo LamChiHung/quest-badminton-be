@@ -118,7 +118,12 @@ public class TourServiceImpl implements TourService {
         captain.setTeam(team);
         team.setCaptain(captain);
 
+        List<Player> oldPlayers = playerRepository.findAllByTeamId(teamId);
         List<Player> players = playerRepository.findAllById(playerIds);
+
+        List<Player> removePlayers = oldPlayers.stream()
+                .filter(player -> !playerIds.contains(player.getId()))
+                .toList();
 
         for (Player player : players) {
             if (!Objects.equals(player.getTour().getId(), team.getTour().getId())) {
@@ -126,6 +131,13 @@ public class TourServiceImpl implements TourService {
             }
             player.setTeam(team);
         }
+        for (Player removePlayer : removePlayers) {
+            if (!Objects.equals(removePlayer.getTour().getId(), team.getTour().getId())) {
+                throw new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_IN_TOUR);
+            }
+            removePlayer.setTeam(null);
+        }
+
         playerRepository.saveAll(players);
     }
 

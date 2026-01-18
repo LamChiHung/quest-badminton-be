@@ -5,6 +5,7 @@ import com.quest.badminton.entity.enumaration.Gender;
 import com.quest.badminton.entity.enumaration.PlayerStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public interface PlayerRepository extends JpaRepository<Player, Long>, JpaSpecif
     Integer countAllByTourIdAndGenderAndStatusIn(Long tourId, Gender gender, List<PlayerStatus> status);
     Integer countAllByTourIdAndStatusIn(Long tourId, List<PlayerStatus> status);
     List<Player> findAllByTourIdAndUserId(Long tourId, Long userId);
+    List<Player> findAllByTeamId(Long teamId);
 
     boolean existsByTourIdAndUserIdAndStatusIn(Long tourId, Long userId, List<PlayerStatus> status);
 }
