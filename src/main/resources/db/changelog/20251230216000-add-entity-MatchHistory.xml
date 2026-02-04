@@ -107,4 +107,15 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="20251230216000-05" author="hunglc">
+        <dropColumn tableName="t_matches_history">
+            <column name="fk_tour_id"/>
+            <column name="fk_group_match_id"/>
+            <column name="status"/>
+            <column name="fk_winner_player_pair_id"/>
+            <column name="fk_referee_id"/>
+            <column name="fk_match_id"/>
+            <column name="fk_parent_match_id"/>
+        </dropColumn>
+    </changeSet>
 </databaseChangeLog>

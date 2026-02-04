@@ -50,8 +50,9 @@ public class GlobalExceptionHandler {
             case ERR_PLAYER_REGISTRATION_APPROVED -> "Đã tham gia vào giải đấu";
             case ERR_PLAYER_BANNED -> "Đã bị cấm trong giải đấu";
             case ERR_TOUR_NOT_FOUND -> "Không tìm thấy giải đấu";
-            case ERR_GROUP_MATCH_NOT_FOUND -> "Không tìm thấy vòng đấu";
-            case ERR_GROUP_MATCH_NOT_IN_TOUR -> "Vòng đấu không có trong giải đấu";
+            case ERR_GROUP_MATCH_NOT_FOUND -> "Không tìm thấy nhóm đấu";
+            case ERR_GROUP_MATCH_NOT_IN_TOUR -> "Nhóm đấu không có trong giải đấu";
+            case ERR_GROUP_MATCH_EXISTS -> "Nhóm đấu đã tồn tại";
             case ERR_PLAYER_NOT_FOUND -> "Không tìm thấy vận động viên";
             case ERR_MALE_PLAYER_FULL -> "Đã hết số lượng thành viên nam trong giải đấu";
             case ERR_FEMALE_PLAYER_FULL -> "Đã hết số lượng thành viên nữ trong giải đấu";
@@ -62,6 +63,11 @@ public class GlobalExceptionHandler {
             case ERR_PLAYER_PAIR_EXISTS -> "Cặp đấu đã tồn tại";
             case ERR_PLAYER_PAIR_NOT_FOUND -> "Không tìm thấy cặp đấu";
             case ERR_PLAYER_PAIR_NOT_IN_TOUR -> "Cặp đấu không có trong giải đấu";
+            case ERR_PLAYER_PAIR_IN_MATCH -> "Cặp đấu đã được sắp trận";
+            case ERR_PLAYER_PAIR_INVALID -> "Cặp đấu không hợp lệ";
+            case ERR_ROUND_EXISTS -> "Vòng đấu đã tồn tại";
+            case ERR_ROUND_NOT_FOUND -> "Vòng đấu không tồn tại";
+            case ERR_MATCH_NOT_FOUND -> "Trận đấu không tồn tại";
             default -> "Có lỗi xảy ra";
         };
     }

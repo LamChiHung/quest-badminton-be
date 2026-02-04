@@ -1,14 +1,7 @@
 package com.quest.badminton.service.impl;
 
 import com.quest.badminton.constant.ErrorConstants;
-import com.quest.badminton.entity.GroupMatch;
-import com.quest.badminton.entity.Match;
-import com.quest.badminton.entity.Player;
-import com.quest.badminton.entity.PlayerPair;
-import com.quest.badminton.entity.Referee;
-import com.quest.badminton.entity.Team;
-import com.quest.badminton.entity.Tour;
-import com.quest.badminton.entity.User;
+import com.quest.badminton.entity.*;
 import com.quest.badminton.entity.enumaration.Gender;
 import com.quest.badminton.entity.enumaration.PlayerPairType;
 import com.quest.badminton.entity.enumaration.PlayerStatus;
@@ -16,23 +9,9 @@ import com.quest.badminton.entity.enumaration.PlayerTier;
 import com.quest.badminton.entity.enumaration.TourRole;
 import com.quest.badminton.entity.enumaration.TourStatus;
 import com.quest.badminton.exception.BadRequestException;
-import com.quest.badminton.repository.GroupMatchRepository;
-import com.quest.badminton.repository.MatchRepository;
-import com.quest.badminton.repository.PlayerPairRepository;
-import com.quest.badminton.repository.PlayerRepository;
-import com.quest.badminton.repository.RefereeRepository;
-import com.quest.badminton.repository.TeamRepository;
-import com.quest.badminton.repository.TourRepository;
-import com.quest.badminton.repository.UserRepository;
+import com.quest.badminton.repository.*;
 import com.quest.badminton.service.TourService;
-import com.quest.badminton.service.dto.request.AddPlayerToTeamRequestDto;
-import com.quest.badminton.service.dto.request.ApprovePlayerRequestDto;
-import com.quest.badminton.service.dto.request.GroupMatchRequestDto;
-import com.quest.badminton.service.dto.request.MatchRequestDto;
-import com.quest.badminton.service.dto.request.RegisterPlayerPairRequestDto;
-import com.quest.badminton.service.dto.request.RegisterTourPlayerRequestDto;
-import com.quest.badminton.service.dto.request.TeamRequestDto;
-import com.quest.badminton.service.dto.request.TourRequestDto;
+import com.quest.badminton.service.dto.request.*;
 import com.quest.badminton.service.dto.response.CheckTourRoleResponseDto;
 import com.quest.badminton.util.CodeUtil;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +36,7 @@ public class TourServiceImpl implements TourService {
     private final GroupMatchRepository groupMatchRepository;
     private final PlayerPairRepository playerPairRepository;
     private final MatchRepository matchRepository;
+    private final RoundRepository roundRepository;
 
     @Override
     @Transactional
@@ -251,16 +232,37 @@ public class TourServiceImpl implements TourService {
         Long player1Id = request.getPlayer1Id();
         Long player2Id = request.getPlayer2Id();
         PlayerPairType type = request.getType();
-        if (playerPairRepository.existsByTourIdAndPlayer1IdAndPlayer2Id(tourId, player1Id, player2Id) ||
-            playerPairRepository.existsByTourIdAndPlayer1IdAndPlayer2Id(tourId, player2Id, player1Id))
-        {
-            throw new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_EXISTS);
+
+        Set<PlayerPairType> singleTypes = Set.of(PlayerPairType.SINGLE_MALE, PlayerPairType.SINGLE_FEMALE);
+        if (singleTypes.contains(type)) {
+            if (player2Id != null) {
+                throw new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_INVALID);
+            }
+        } else {
+            if (player2Id == null) {
+                throw new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_INVALID);
+            }
         }
+
+        if (player2Id == null) {
+            if (playerPairRepository.existsByTourIdAndPlayer1IdAndPlayer2IdIsNull(tourId, player1Id)) {
+                throw new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_EXISTS);
+            }
+        } else {
+            if (playerPairRepository.existsByTourIdAndPlayer1IdAndPlayer2Id(tourId, player1Id, player2Id) ||
+                    playerPairRepository.existsByTourIdAndPlayer1IdAndPlayer2Id(tourId, player2Id, player1Id))
+            {
+                throw new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_EXISTS);
+            }
+        }
+
 
         Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_TOUR_NOT_FOUND));
         Player player1 = playerRepository.findById(player1Id).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_FOUND));
-        Player player2 = playerRepository.findById(player2Id).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_FOUND));
-
+        Player player2 = null;
+        if (player2Id != null) {
+            player2 = playerRepository.findById(player2Id).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_FOUND));
+        }
         Player captain = playerRepository.findAllByTourIdAndUserId(tourId, userId)
                 .stream()
                 .filter(p -> p.getStatus().equals(PlayerStatus.APPROVED))
@@ -270,9 +272,13 @@ public class TourServiceImpl implements TourService {
         Team team = teamRepository.findByTourIdAndCaptainId(tourId, captain.getId())
                 .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_TEAM_NOT_FOUND));
 
-        if (!Objects.equals(player1.getTeam().getId(), team.getId()) || !Objects.equals(player2.getTeam().getId(), team.getId())) {
+        if (!Objects.equals(player1.getTeam().getId(), team.getId())) {
             throw new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_IN_TEAM);
         }
+        if (player2 != null && !Objects.equals(player2.getTeam().getId(), team.getId())) {
+            throw new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_IN_TEAM);
+        }
+
         playerPairRepository.save(PlayerPair.builder()
                 .tour(tour)
                 .player1(player1)
@@ -317,31 +323,18 @@ public class TourServiceImpl implements TourService {
 
     @Override
     @Transactional
-    public void createGroupMatch(GroupMatchRequestDto request) {
-        Long tourId = request.getTourId();
-        String name = request.getName();
-        Integer order = request.getOrder();
-
-        Tour tour = tourRepository.findById(tourId)
-                .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_TOUR_NOT_FOUND));
-
-        groupMatchRepository.save(GroupMatch.builder()
-                .tour(tour)
-                .name(name)
-                .orders(order)
-                .build());
-    }
-
-    @Override
-    @Transactional
     public void createMatch(MatchRequestDto request) {
         Long tourId = request.getTourId();
         Long groupMatchId = request.getGroupMatchId();
+        Long roundId = request.getRoundId();
         Long playerPair1Id = request.getPlayerPair1Id();
         Long playerPair2Id = request.getPlayerPair2Id();
 
         Tour tour = tourRepository.findById(tourId)
                 .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_TOUR_NOT_FOUND));
+
+        Round round = roundRepository.findById(roundId)
+                .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_ROUND_NOT_FOUND));
 
         GroupMatch groupMatch = groupMatchRepository.findById(groupMatchId)
                 .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_GROUP_MATCH_NOT_FOUND));
@@ -353,7 +346,7 @@ public class TourServiceImpl implements TourService {
         PlayerPair playerPair1 = null;
         if (playerPair1Id != null) {
             playerPair1 = playerPairRepository.findById(playerPair1Id)
-                    .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_EXISTS));
+                    .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_NOT_FOUND));
             if (!Objects.equals(playerPair1.getTour().getId(), tour.getId())) {
                 throw new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_NOT_IN_TOUR);
             }
@@ -362,7 +355,7 @@ public class TourServiceImpl implements TourService {
         PlayerPair playerPair2 = null;
         if (playerPair2Id != null) {
             playerPair2 = playerPairRepository.findById(playerPair2Id)
-                    .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_EXISTS));
+                    .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_NOT_FOUND));
             if (!Objects.equals(playerPair2.getTour().getId(), tour.getId())) {
                 throw new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_NOT_IN_TOUR);
             }
@@ -374,8 +367,52 @@ public class TourServiceImpl implements TourService {
                 .playerPair2(playerPair2)
                 .tour(tour)
                 .groupMatch(groupMatch)
+                .round(round)
                 .build());
 
+    }
+
+    @Override
+    @Transactional
+    public void deletePlayerPair(Long id) {
+        if (matchRepository.existsByPlayerPair1IdOrPlayerPair2Id(id, id)) {
+            throw new BadRequestException(ErrorConstants.ERR_PLAYER_PAIR_IN_MATCH);
+        }
+        playerPairRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void createRound(RoundRequestDto request) {
+        Long tourId = request.getTourId();
+        String name = request.getName();
+        if (roundRepository.existsByTourIdAndName(tourId, name))
+        {
+            throw new BadRequestException(ErrorConstants.ERR_ROUND_EXISTS);
+        }
+        Tour tour = tourRepository.findById(tourId).orElseThrow(()-> new BadRequestException(ErrorConstants.ERR_TOUR_NOT_FOUND));
+        roundRepository.save(Round.builder()
+                .name(name)
+                .tour(tour)
+                .type(request.getType())
+                .build());
+    }
+
+    @Override
+    @Transactional
+    public void createGroupMatch(GroupMatchRequestDto request) {
+        Long tourId = request.getTourId();
+        String name = request.getName();
+
+        if (groupMatchRepository.existsByTourIdAndName(tourId, name)) {
+            throw new BadRequestException(ErrorConstants.ERR_GROUP_MATCH_EXISTS);
+        }
+
+        Tour tour = tourRepository.findById(tourId).orElseThrow(()-> new BadRequestException(ErrorConstants.ERR_TOUR_NOT_FOUND));
+        groupMatchRepository.save(GroupMatch.builder()
+                .name(name)
+                .tour(tour)
+                .build());
     }
 
 }

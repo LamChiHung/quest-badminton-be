@@ -19,10 +19,6 @@ public class GroupMatchRequestDto {
     @Min(1)
     private Long tourId;
 
-    @NotNull
-    @Min(1)
-    private Integer order;
-
     @NotBlank
     private String name;
 }

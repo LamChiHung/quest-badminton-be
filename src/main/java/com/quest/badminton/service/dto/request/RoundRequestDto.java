@@ -1,7 +1,9 @@
 package com.quest.badminton.service.dto.request;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.quest.badminton.entity.enumaration.RoundType;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,16 +15,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MatchRequestDto {
-    private Long playerPair1Id;
-    private Long playerPair2Id;
-
+public class RoundRequestDto {
     @NotNull
-    private Long groupMatchId;
-
-    @NotNull
+    @Min(1)
     private Long tourId;
 
+    @NotBlank
+    private String name;
+
     @NotNull
-    private Long roundId;
+    private RoundType type;
 }

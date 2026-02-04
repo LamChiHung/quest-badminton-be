@@ -21,4 +21,8 @@ public interface TourService {
     void createGroupMatch(GroupMatchRequestDto request);
 
     void createMatch(MatchRequestDto request);
+
+    void deletePlayerPair(Long id);
+
+    void createRound(RoundRequestDto request);
 }

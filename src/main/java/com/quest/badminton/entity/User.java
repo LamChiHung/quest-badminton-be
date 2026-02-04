@@ -44,7 +44,4 @@ public class User {
 
     @Column(name = "register_token")
     private String registerToken;
-
-    @OneToMany(mappedBy = "user")
-    private List<Player> players;
 }

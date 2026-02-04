@@ -12,4 +12,6 @@ public interface TeamQueryService {
 
     TeamResponseDto getTeam(Long id, boolean isForAdmin);
 
+    TeamResponseDto getMyTeam(Long tourId, Long userId);
+
 }

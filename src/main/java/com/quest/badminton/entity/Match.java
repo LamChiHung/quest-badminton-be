@@ -41,6 +41,10 @@ public class Match {
     @ManyToOne
     private GroupMatch groupMatch;
 
+    @JoinColumn(name = "fk_round_id", referencedColumnName = "id")
+    @ManyToOne
+    private Round round;
+
     @JoinColumn(name = "fk_tour_id", referencedColumnName = "id")
     @ManyToOne
     private Tour tour;
@@ -74,6 +78,10 @@ public class Match {
     private Referee referee;
 
     @ManyToOne
-    @JoinColumn(name = "fk_parent_match_id", referencedColumnName = "id")
-    private Match parentMatch;
+    @JoinColumn(name = "fk_parent_match_id_1", referencedColumnName = "id")
+    private Match parentMatch1;
+
+    @ManyToOne
+    @JoinColumn(name = "fk_parent_match_id_2", referencedColumnName = "id")
+    private Match parentMatch2;
 }

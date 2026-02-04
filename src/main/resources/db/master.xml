@@ -15,4 +15,6 @@
     <include file="db/changelog/20251230214000-add-entity-GroupMatch.xml" />
     <include file="db/changelog/20251230215000-add-entity-Match.xml" />
     <include file="db/changelog/20251230216000-add-entity-MatchHistory.xml" />
+    <include file="db/changelog/20260128210000-add-entity-Round.xml" />
+    <include file="db/changelog/20260128220000-add-entity-GroupMatchRound.xml" />
 </databaseChangeLog>

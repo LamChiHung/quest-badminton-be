@@ -1,21 +1,18 @@
 package com.quest.badminton.service.mapper;
 
-import com.quest.badminton.entity.Player;
-import com.quest.badminton.entity.Team;
-import com.quest.badminton.entity.Tour;
-import com.quest.badminton.entity.User;
+import com.quest.badminton.entity.*;
 import com.quest.badminton.entity.enumaration.Gender;
+import com.quest.badminton.entity.enumaration.MatchStatus;
 import com.quest.badminton.entity.enumaration.PlayerStatus;
 import com.quest.badminton.entity.enumaration.TourStatus;
 import com.quest.badminton.repository.PlayerRepository;
 import com.quest.badminton.repository.UserRepository;
-import com.quest.badminton.service.dto.response.PlayerResponseDto;
-import com.quest.badminton.service.dto.response.TeamResponseDto;
-import com.quest.badminton.service.dto.response.TourResponseDto;
+import com.quest.badminton.service.dto.response.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -104,6 +101,71 @@ public class BadmintonMapper {
                 .number(entity.getNumber())
                 .name(entity.getName())
                 .captain(toResponseDto(entity.getCaptain(), isForAdmin))
+                .build();
+    }
+
+    public PlayerPairResponseDto toResponseDto(PlayerPair entity, boolean isForAdmin) {
+        if (entity == null) return null;
+        return PlayerPairResponseDto.builder()
+                .id(entity.getId())
+                .player1(toResponseDto(entity.getPlayer1(), isForAdmin))
+                .player2(toResponseDto(entity.getPlayer2(), isForAdmin))
+                .tourId(entity.getTour().getId())
+                .teamId(entity.getTeam().getId())
+                .type(entity.getType())
+                .build();
+    }
+
+    public GroupMatchResponseDto toResponseDto(GroupMatch entity) {
+        if (entity == null) return null;
+        return GroupMatchResponseDto.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .tourId(entity.getTour().getId())
+                .build();
+    }
+
+    public RoundResponseDto toResponseDto(Round entity) {
+        if (entity == null) return null;
+        return RoundResponseDto.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .tourId(entity.getTour().getId())
+                .build();
+    }
+
+    public RefereeResponseDto toResponseDto(Referee entity, boolean isForAdmin) {
+        if (entity == null) return null;
+        return RefereeResponseDto.builder()
+                .id(entity.getId())
+                .name(entity.getUser().getName())
+                .email(entity.getUser().getEmail())
+                .status(entity.getStatus())
+                .tourId(entity.getTour().getId())
+                .note(entity.getNote())
+                .approvedBy(isForAdmin ? entity.getApprovedBy() : null)
+                .rejectedBy(isForAdmin? entity.getRejectedBy() : null)
+                .build();
+    }
+
+    public MatchResponseDto toResponseDto(Match entity, boolean isForAdmin) {
+        if (entity == null) return null;
+        return MatchResponseDto.builder()
+                .id(entity.getId())
+                .playerPair1(toResponseDto(entity.getPlayerPair1(), isForAdmin))
+                .playerPair2(toResponseDto(entity.getPlayerPair2(), isForAdmin))
+                .groupMatchId(entity.getGroupMatch().getId())
+                .roundId(entity.getRound().getId())
+                .tourId(entity.getTour().getId())
+                .score1(entity.getScore1())
+                .score2(entity.getScore2())
+                .status(entity.getStatus())
+                .servePlayerId(entity.getServePlayer().getId())
+                .receivePlayerId(entity.getReceivePlayer().getId())
+                .winnerId(entity.getWinner() != null ? entity.getWinner().getId() : null)
+                .referee(entity.getReferee() != null ? toResponseDto(entity.getReferee(), isForAdmin) : null)
+                .parentMatch1Id(entity.getParentMatch1() != null ? entity.getParentMatch1().getId() : null)
+                .parentMatch2Id(entity.getParentMatch2() != null ? entity.getParentMatch2().getId() : null)
                 .build();
     }
 }

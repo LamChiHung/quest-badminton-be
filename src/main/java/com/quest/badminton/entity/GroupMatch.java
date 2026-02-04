@@ -29,10 +29,8 @@ public class GroupMatch {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "orders")
-    private Integer orders;
-
     @ManyToOne
     @JoinColumn(name = "fk_tour_id", referencedColumnName = "id")
     private Tour tour;
+
 }

@@ -37,23 +37,11 @@ public class MatchHistory {
     @ManyToOne
     private PlayerPair playerPair2;
 
-    @JoinColumn(name = "fk_group_match_id", referencedColumnName = "id")
-    @ManyToOne
-    private GroupMatch groupMatch;
-
-    @JoinColumn(name = "fk_tour_id", referencedColumnName = "id")
-    @ManyToOne
-    private Tour tour;
-
     @Column(name = "score_1")
     private Integer score1;
 
     @Column(name = "score_2")
     private Integer score2;
-
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private MatchStatus status;
 
     @JoinColumn(name = "fk_serve_player_id", referencedColumnName = "id")
     @ManyToOne
@@ -62,14 +50,6 @@ public class MatchHistory {
     @JoinColumn(name = "fk_receive_player_id", referencedColumnName = "id")
     @ManyToOne
     private Player receivePlayer;
-
-    @JoinColumn(name = "fk_winner_player_pair_id", referencedColumnName = "id")
-    @ManyToOne
-    private PlayerPair winner;
-
-    @JoinColumn(name = "fk_referee_id", referencedColumnName = "id")
-    @ManyToOne
-    private User referee;
 
     @ManyToOne
     @JoinColumn(name = "fk_match_id", referencedColumnName = "id")

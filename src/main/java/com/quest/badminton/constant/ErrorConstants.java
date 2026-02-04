@@ -19,6 +19,7 @@ public class ErrorConstants {
 
     public static final String ERR_GROUP_MATCH_NOT_FOUND = "error.group-match.not-found";
     public static final String ERR_GROUP_MATCH_NOT_IN_TOUR = "error.group-match.not-in-tour";
+    public static final String ERR_GROUP_MATCH_EXISTS = "error.group-match.exists";
 
     public static final String ERR_PLAYER_NOT_FOUND = "error.player.not-found";
     public static final String ERR_MALE_PLAYER_FULL = "error.player.male.full";
@@ -31,4 +32,13 @@ public class ErrorConstants {
     public static final String ERR_PLAYER_PAIR_EXISTS = "error.player-pair.exists";
     public static final String ERR_PLAYER_PAIR_NOT_FOUND = "error.player-pair.not-found";
     public static final String ERR_PLAYER_PAIR_NOT_IN_TOUR = "error.player-pair.not-in-tour";
+    public static final String ERR_PLAYER_PAIR_IN_MATCH = "error.player-pair.in-match";
+    public static final String ERR_PLAYER_PAIR_INVALID = "error.player-pair.invalid";
+
+    public static final String ERR_ROUND_EXISTS = "error.round.exists";
+    public static final String ERR_ROUND_NOT_FOUND = "error.round.not-found";
+
+    public static final String ERR_MATCH_NOT_FOUND = "error.match.not-found";
+
+
 }

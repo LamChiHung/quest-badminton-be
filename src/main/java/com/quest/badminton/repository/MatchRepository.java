@@ -3,8 +3,10 @@ package com.quest.badminton.repository;
 import com.quest.badminton.entity.GroupMatch;
 import com.quest.badminton.entity.Match;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MatchRepository extends JpaRepository<Match, Long> {
+public interface MatchRepository extends JpaRepository<Match, Long>, JpaSpecificationExecutor<Match> {
+    boolean existsByPlayerPair1IdOrPlayerPair2Id(Long playerPair1Id, Long playerPair2Id);
 }
