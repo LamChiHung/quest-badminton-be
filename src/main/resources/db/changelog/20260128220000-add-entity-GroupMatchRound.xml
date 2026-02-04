@@ -35,4 +35,8 @@
                                  referencedTableName="t_rounds"
                                  referencedColumnNames="id"/>
     </changeSet>
+    <changeSet id="20260128220000-04" author="hunglc">
+        <dropTable tableName="t_group_matches_rounds"/>
+    </changeSet>
+
 </databaseChangeLog>

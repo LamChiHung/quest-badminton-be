@@ -17,4 +17,5 @@ public class GroupMatchResponseDto {
     private Long id;
     private String name;
     private Long tourId;
+    private Long roundId;
 }

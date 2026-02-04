@@ -43,6 +43,10 @@ public class GroupMatchQueryServiceImpl extends QueryService<GroupMatch> impleme
             spec = spec.and(buildSpecification(criteria.getTourId(), root -> root.get(GroupMatch_.tour).get(Tour_.id)));
         }
 
+        if (criteria.getRoundId() != null) {
+            spec = spec.and(buildSpecification(criteria.getRoundId(), root -> root.get(GroupMatch_.round).get(Round_.id)));
+        }
+
         if (criteria.getName() != null) {
             spec = spec.and(buildStringSpecification(criteria.getName(), GroupMatch_.name));
         }

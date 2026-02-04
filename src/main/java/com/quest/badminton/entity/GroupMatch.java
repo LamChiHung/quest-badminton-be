@@ -33,4 +33,8 @@ public class GroupMatch {
     @JoinColumn(name = "fk_tour_id", referencedColumnName = "id")
     private Tour tour;
 
+    @ManyToOne
+    @JoinColumn(name = "fk_round_id", referencedColumnName = "id")
+    private Round round;
+
 }

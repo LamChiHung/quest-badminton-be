@@ -36,4 +36,30 @@
     <changeSet id="20251230214000-04" author="hunglc">
         <dropColumn tableName="t_group_matches" columnName="fk_tour_id"/>
     </changeSet>
+    <changeSet id="20251230214000-05" author="hunglc">
+        <dropColumn tableName="t_group_matches" columnName="orders"/>
+        <addColumn tableName="t_group_matches">
+            <column name="fk_tour_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="t_group_matches"
+                                 baseColumnNames="fk_tour_id"
+                                 constraintName="fk_t_tours_id"
+                                 referencedTableName="t_tours"
+                                 referencedColumnNames="id"/>
+        <createIndex tableName="t_group_matches" indexName="idx_t_group_matches_fk_tour_id">
+            <column name="fk_tour_id" type="bigint"/>
+        </createIndex>
+    </changeSet>
+    <changeSet id="20251230214000-06" author="hunglc">
+        <addColumn tableName="t_group_matches">
+            <column name="fk_round_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="t_group_matches" indexName="idx_t_group_matches_fk_round_id">
+            <column name="fk_round_id" type="bigint"/>
+        </createIndex>
+    </changeSet>
 </databaseChangeLog>

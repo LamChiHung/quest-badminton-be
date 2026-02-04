@@ -19,11 +19,13 @@ public class GroupMatchCriteria implements Serializable, Criteria {
     private LongFilter id;
     private StringFilter name;
     private LongFilter tourId;
+    private LongFilter roundId;
 
     public GroupMatchCriteria(GroupMatchCriteria other) {
         this.id = other.id == null ? null : other.id.copy();
         this.name = other.name == null ? null : other.name.copy();
         this.tourId = other.tourId == null ? null : other.tourId.copy();
+        this.roundId = other.roundId == null ? null : other.roundId.copy();
     }
 
     @Override

@@ -402,6 +402,7 @@ public class TourServiceImpl implements TourService {
     @Transactional
     public void createGroupMatch(GroupMatchRequestDto request) {
         Long tourId = request.getTourId();
+        Long roundId = request.getRoundId();
         String name = request.getName();
 
         if (groupMatchRepository.existsByTourIdAndName(tourId, name)) {
@@ -409,9 +410,11 @@ public class TourServiceImpl implements TourService {
         }
 
         Tour tour = tourRepository.findById(tourId).orElseThrow(()-> new BadRequestException(ErrorConstants.ERR_TOUR_NOT_FOUND));
+        Round round = roundRepository.findById(roundId).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_ROUND_NOT_FOUND));
         groupMatchRepository.save(GroupMatch.builder()
                 .name(name)
                 .tour(tour)
+                .round(round)
                 .build());
     }
 

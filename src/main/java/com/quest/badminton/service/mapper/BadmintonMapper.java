@@ -122,6 +122,7 @@ public class BadmintonMapper {
                 .id(entity.getId())
                 .name(entity.getName())
                 .tourId(entity.getTour().getId())
+                .roundId(entity.getRound().getId())
                 .build();
     }
 
