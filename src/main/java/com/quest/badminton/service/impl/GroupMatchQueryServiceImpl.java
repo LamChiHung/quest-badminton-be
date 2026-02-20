@@ -1,7 +1,9 @@
 package com.quest.badminton.service.impl;
 
 import com.quest.badminton.config.specifications.QueryService;
+import com.quest.badminton.constant.ErrorConstants;
 import com.quest.badminton.entity.*;
+import com.quest.badminton.exception.BadRequestException;
 import com.quest.badminton.repository.GroupMatchRepository;
 import com.quest.badminton.service.GroupMatchQueryService;
 import com.quest.badminton.service.criteria.GroupMatchCriteria;
@@ -26,6 +28,12 @@ public class GroupMatchQueryServiceImpl extends QueryService<GroupMatch> impleme
         Specification <GroupMatch> specification = createSpecification(criteria);
         return groupMatchRepository.findAll(specification, pageable)
                 .map(t -> badmintonMapper.toResponseDto(t));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public GroupMatchResponseDto getGroupMatch(Long id) {
+        return badmintonMapper.toResponseDto(groupMatchRepository.findById(id).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_GROUP_MATCH_NOT_FOUND)));
     }
 
     private Specification<GroupMatch> createSpecification(GroupMatchCriteria criteria) {

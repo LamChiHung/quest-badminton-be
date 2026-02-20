@@ -68,6 +68,8 @@ public class GlobalExceptionHandler {
             case ERR_ROUND_EXISTS -> "Vòng đấu đã tồn tại";
             case ERR_ROUND_NOT_FOUND -> "Vòng đấu không tồn tại";
             case ERR_MATCH_NOT_FOUND -> "Trận đấu không tồn tại";
+            case ERR_MATCH_INVALID -> "Trận đấu không hợp lệ";
+            case ERR_MATCH_HISTORY_NOT_FOUND -> "Lịch sử trận đấu không tồn tại";
             default -> "Có lỗi xảy ra";
         };
     }

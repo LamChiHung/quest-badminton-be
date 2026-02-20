@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,9 +29,17 @@ public class MatchResponseDto {
 
     private Long tourId;
 
-    private Integer score1 = 0;
+    private Integer score1Set1 = 0;
 
-    private Integer score2 = 0;
+    private Integer score2Set1 = 0;
+
+    private Integer score1Set2 = 0;
+
+    private Integer score2Set2 = 0;
+
+    private Integer score1Set3 = 0;
+
+    private Integer score2Set3 = 0;
 
     private MatchStatus status;
 
@@ -44,4 +54,9 @@ public class MatchResponseDto {
     private Long parentMatch1Id;
 
     private Long parentMatch2Id;
+    private Integer set;
+    private Integer totalSet;
+
+    private Instant startTime;
+    private Instant endTime;
 }

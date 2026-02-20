@@ -40,9 +40,6 @@ public class Team {
     @JoinColumn(name = "fk_tour_id", referencedColumnName = "id")
     private Tour tour;
 
-    @OneToMany(mappedBy = "team")
-    private List<Player> players;
-
     @OneToOne
     @JoinColumn(name = "fk_captain_id", referencedColumnName = "id")
     private Player captain;

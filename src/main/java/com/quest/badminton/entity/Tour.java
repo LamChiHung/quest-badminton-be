@@ -78,15 +78,6 @@ public class Tour {
     @Column(name = "rule_url")
     private String ruleUrl;
 
-    @OneToMany(mappedBy = "tour")
-    private List<Team> teams;
-
-    @OneToMany(mappedBy = "tour")
-    private List<Player> players;
-
-    @OneToMany(mappedBy = "tour")
-    private List<Referee> referees;
-
     @Column(name = "is_private")
     @Builder.Default
     private Boolean isPrivate = false;

@@ -7,4 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface RoundQueryService {
     Page<RoundResponseDto> search(RoundCriteria criteria, Pageable pageable);
+    RoundResponseDto getRound(Long id);
 }

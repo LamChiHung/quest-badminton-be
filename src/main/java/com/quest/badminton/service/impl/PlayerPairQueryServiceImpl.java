@@ -47,6 +47,10 @@ public class PlayerPairQueryServiceImpl extends QueryService<PlayerPair> impleme
             spec = spec.and(buildSpecification(criteria.getTeamId(), root -> root.get(PlayerPair_.team).get(Team_.id)));
         }
 
+        if (criteria.getType() != null) {
+            spec = spec.and(buildSpecification(criteria.getType(), PlayerPair_.type));
+        }
+
         if (criteria.getPlayerId() != null) {
             Specification<PlayerPair> spec1 = Specification.anyOf();
             Specification<PlayerPair> spec2 = Specification.anyOf();

@@ -37,12 +37,6 @@ public class MatchHistory {
     @ManyToOne
     private PlayerPair playerPair2;
 
-    @Column(name = "score_1")
-    private Integer score1;
-
-    @Column(name = "score_2")
-    private Integer score2;
-
     @JoinColumn(name = "fk_serve_player_id", referencedColumnName = "id")
     @ManyToOne
     private Player servePlayer;
@@ -54,4 +48,36 @@ public class MatchHistory {
     @ManyToOne
     @JoinColumn(name = "fk_match_id", referencedColumnName = "id")
     private Match match;
+
+    @Column(name = "score_1_set_1")
+    @Builder.Default
+    private Integer score1Set1 = 0;
+
+    @Column(name = "score_2_set_1")
+    @Builder.Default
+    private Integer score2Set1 = 0;
+
+    @Column(name = "score_1_set_2")
+    @Builder.Default
+    private Integer score1Set2 = 0;
+
+    @Column(name = "score_2_set_2")
+    @Builder.Default
+    private Integer score2Set2 = 0;
+
+    @Column(name = "score_1_set_3")
+    @Builder.Default
+    private Integer score1Set3 = 0;
+
+    @Column(name = "score_2_set_3")
+    @Builder.Default
+    private Integer score2Set3 = 0;
+
+    @Column(name = "set")
+    @Builder.Default
+    private Integer set = 1;
+
+    @Column(name = "total_set")
+    @Builder.Default
+    private Integer totalSet = 3;
 }

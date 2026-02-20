@@ -39,6 +39,8 @@ public class ErrorConstants {
     public static final String ERR_ROUND_NOT_FOUND = "error.round.not-found";
 
     public static final String ERR_MATCH_NOT_FOUND = "error.match.not-found";
+    public static final String ERR_MATCH_INVALID = "error.match.invalid";
 
+    public static final String ERR_MATCH_HISTORY_NOT_FOUND = "error.match-history.not-found";
 
 }

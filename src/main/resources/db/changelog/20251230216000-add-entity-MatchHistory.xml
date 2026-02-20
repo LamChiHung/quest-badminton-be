@@ -118,4 +118,47 @@
             <column name="fk_parent_match_id"/>
         </dropColumn>
     </changeSet>
+    <changeSet id="20251230216000-06" author="hunglc">
+        <addColumn tableName="t_matches_history">
+            <column name="set" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_set" type="int" defaultValue="3">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score_1_set_1" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score_1_set_2" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score_2_set_1" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score_2_set_2" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score_1_set_3" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score_2_set_3" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <dropColumn tableName="t_matches_history" columnName="score_1" />
+        <dropColumn tableName="t_matches_history" columnName="score_2" />
+    </changeSet>
+    <changeSet id="20251230216000-07" author="hunglc">
+        <addColumn tableName="t_matches_history">
+            <column name="fk_match_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="t_matches_history"
+                                 baseColumnNames="fk_match_id"
+                                 constraintName="fk_match_id"
+                                 referencedTableName="t_matches"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
 </databaseChangeLog>

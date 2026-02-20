@@ -2,6 +2,7 @@ package com.quest.badminton.service;
 
 import com.quest.badminton.service.dto.request.*;
 import com.quest.badminton.service.dto.response.CheckTourRoleResponseDto;
+import com.quest.badminton.service.dto.response.TourDataSummaryResponseDto;
 
 public interface TourService {
     void createTour(TourRequestDto request);
@@ -25,4 +26,16 @@ public interface TourService {
     void deletePlayerPair(Long id);
 
     void createRound(RoundRequestDto request);
+
+    void startMatch(StartMatchRequestDto request);
+
+    void addPoint(AddPointRequestDto request);
+
+    void endSet(Long id);
+
+    void undoMatch(Long id);
+
+    void endMatch(EndMatchRequestDto request);
+
+    TourDataSummaryResponseDto summaryData(Long id);
 }

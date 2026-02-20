@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
@@ -42,7 +43,7 @@ public class TourPrivateController {
     }
 
     @GetMapping
-    public ResponseEntity<Page <TourResponseDto>> searchTours(TourCriteria criteria, @PageableDefault Pageable pageable)
+    public ResponseEntity<Page <TourResponseDto>> searchTours(TourCriteria criteria, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable)
     {
         return ResponseEntity.ok(tourQueryService.search(criteria, pageable, true, SecurityUtil.getCurrentUserId()));
     }
@@ -53,7 +54,7 @@ public class TourPrivateController {
     }
 
     @GetMapping("/players")
-    public ResponseEntity<Page<PlayerResponseDto>> searchPlayers(PlayerCriteria criteria, @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<PlayerResponseDto>> searchPlayers(PlayerCriteria criteria, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(playerQueryService.search(criteria, pageable, true));
     }
 
@@ -64,7 +65,7 @@ public class TourPrivateController {
     }
 
     @GetMapping("/teams")
-    public ResponseEntity<Page<TeamResponseDto>> searchTeams(TeamCriteria criteria, @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<TeamResponseDto>> searchTeams(TeamCriteria criteria, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(teamQueryService.search(criteria, pageable, true));
     }
 
@@ -74,7 +75,7 @@ public class TourPrivateController {
     }
 
     @GetMapping("/player-pairs")
-    public ResponseEntity<Page<PlayerPairResponseDto>> searchPairs(PlayerPairCriteria criteria, @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<PlayerPairResponseDto>> searchPairs(PlayerPairCriteria criteria, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(playerPairQueryService.search(criteria, pageable, true));
     }
 
@@ -103,24 +104,24 @@ public class TourPrivateController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/matchs")
+    @PostMapping("/matches")
     public ResponseEntity<Void> createMatch(@Valid @RequestBody MatchRequestDto request) {
         tourService.createMatch(request);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/group-matches")
-    public ResponseEntity<Page<GroupMatchResponseDto>> searchGroupMatches(GroupMatchCriteria criteria, @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<GroupMatchResponseDto>> searchGroupMatches(GroupMatchCriteria criteria, @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(groupMatchQueryService.search(criteria, pageable));
     }
 
     @GetMapping("/rounds")
-    public ResponseEntity<Page<RoundResponseDto>> searchRounds(RoundCriteria criteria, @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<RoundResponseDto>> searchRounds(RoundCriteria criteria, @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(roundQueryService.search(criteria, pageable));
     }
 
     @GetMapping("/matches")
-    public ResponseEntity<Page<MatchResponseDto>> searchMatches(MatchCriteria criteria, @PageableDefault Pageable pageable) {
+    public ResponseEntity<Page<MatchResponseDto>> searchMatches(MatchCriteria criteria, @PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(matchQueryService.search(criteria, pageable, true));
     }
 
@@ -128,4 +129,51 @@ public class TourPrivateController {
     public ResponseEntity<MatchResponseDto> getMatch(@PathVariable Long id) {
         return ResponseEntity.ok(matchQueryService.getMatch(id, true));
     }
+
+    @GetMapping("/group-matches/{id}")
+    public ResponseEntity<GroupMatchResponseDto> getGroupMatch(@PathVariable Long id) {
+        return ResponseEntity.ok(groupMatchQueryService.getGroupMatch(id));
+    }
+
+    @GetMapping("/rounds/{id}")
+    public ResponseEntity<RoundResponseDto> getRound(@PathVariable Long id) {
+        return ResponseEntity.ok(roundQueryService.getRound(id));
+    }
+
+    @PostMapping("/matches/start")
+    public ResponseEntity<Void> startMatch(@RequestBody StartMatchRequestDto requestDto) {
+        tourService.startMatch(requestDto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/matches/add-point")
+    public ResponseEntity<Void> addPoint (@RequestBody AddPointRequestDto requestDto) {
+        tourService.addPoint(requestDto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/matches/{id}/end-set")
+    public ResponseEntity<Void> endSet (@PathVariable Long id) {
+        tourService.endSet(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/matches/{id}/undo")
+    public ResponseEntity<Void> undo (@PathVariable Long id) {
+        tourService.undoMatch(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/matches/end")
+    public ResponseEntity<Void> endMatch(@RequestBody EndMatchRequestDto requestDto) {
+        tourService.endMatch(requestDto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<TourDataSummaryResponseDto> tourSummary(@PathVariable Long id) {
+        return ResponseEntity.ok(tourService.summaryData(id));
+    }
+
+
 }

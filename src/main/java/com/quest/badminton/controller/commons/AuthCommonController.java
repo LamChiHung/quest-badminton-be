@@ -1,10 +1,12 @@
 package com.quest.badminton.controller.commons;
 
 import com.quest.badminton.service.AuthService;
+import com.quest.badminton.service.TourService;
 import com.quest.badminton.service.dto.request.LoginRequestDto;
 import com.quest.badminton.service.dto.request.RegisterRequestDto;
 import com.quest.badminton.service.dto.response.LoginResponseDto;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthCommonController {
     private final AuthService authService;
+    private final TourService tourService;
 
     @GetMapping("/welcome")
     public ResponseEntity<LoginResponseDto> welcome() {
@@ -42,5 +45,4 @@ public class AuthCommonController {
         authService.activeToken(token);
         return ResponseEntity.noContent().build();
     }
-
 }

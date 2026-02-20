@@ -9,4 +9,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface GroupMatchQueryService {
     Page<GroupMatchResponseDto> search(GroupMatchCriteria criteria, Pageable pageable);
+    GroupMatchResponseDto getGroupMatch(Long id);
 }

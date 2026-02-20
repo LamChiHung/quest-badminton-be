@@ -1,7 +1,9 @@
 package com.quest.badminton.service.impl;
 
 import com.quest.badminton.config.specifications.QueryService;
+import com.quest.badminton.constant.ErrorConstants;
 import com.quest.badminton.entity.*;
+import com.quest.badminton.exception.BadRequestException;
 import com.quest.badminton.repository.RoundRepository;
 import com.quest.badminton.service.RoundQueryService;
 import com.quest.badminton.service.criteria.RoundCriteria;
@@ -27,6 +29,12 @@ public class RoundQueryServiceImpl extends QueryService<Round> implements RoundQ
         Specification<Round> specification = createSpecification(criteria);
         return roundRepository.findAll(specification, pageable)
                 .map(t -> badmintonMapper.toResponseDto(t));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RoundResponseDto getRound(Long id) {
+        return badmintonMapper.toResponseDto(roundRepository.findById(id).orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_ROUND_NOT_FOUND)));
     }
 
     private Specification<Round> createSpecification(RoundCriteria criteria) {

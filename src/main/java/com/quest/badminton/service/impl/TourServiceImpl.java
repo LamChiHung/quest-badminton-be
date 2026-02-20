@@ -2,26 +2,22 @@ package com.quest.badminton.service.impl;
 
 import com.quest.badminton.constant.ErrorConstants;
 import com.quest.badminton.entity.*;
-import com.quest.badminton.entity.enumaration.Gender;
-import com.quest.badminton.entity.enumaration.PlayerPairType;
-import com.quest.badminton.entity.enumaration.PlayerStatus;
-import com.quest.badminton.entity.enumaration.PlayerTier;
-import com.quest.badminton.entity.enumaration.TourRole;
-import com.quest.badminton.entity.enumaration.TourStatus;
+import com.quest.badminton.entity.enumaration.*;
 import com.quest.badminton.exception.BadRequestException;
 import com.quest.badminton.repository.*;
 import com.quest.badminton.service.TourService;
 import com.quest.badminton.service.dto.request.*;
 import com.quest.badminton.service.dto.response.CheckTourRoleResponseDto;
+import com.quest.badminton.service.dto.response.TourDataSummaryResponseDto;
 import com.quest.badminton.util.CodeUtil;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +33,7 @@ public class TourServiceImpl implements TourService {
     private final PlayerPairRepository playerPairRepository;
     private final MatchRepository matchRepository;
     private final RoundRepository roundRepository;
+    private final MatchHistoryRepository matchHistoryRepository;
 
     @Override
     @Transactional
@@ -368,6 +365,7 @@ public class TourServiceImpl implements TourService {
                 .tour(tour)
                 .groupMatch(groupMatch)
                 .round(round)
+                .status(MatchStatus.UPCOMING)
                 .build());
 
     }
@@ -416,6 +414,403 @@ public class TourServiceImpl implements TourService {
                 .tour(tour)
                 .round(round)
                 .build());
+    }
+
+    @Override
+    @Transactional
+    public void startMatch(StartMatchRequestDto request) {
+        Match match = matchRepository.findById(request.getMatchId())
+                .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_MATCH_NOT_FOUND));
+
+        if (!match.getStatus().equals(MatchStatus.UPCOMING)) {
+            throw new BadRequestException(ErrorConstants.ERR_MATCH_INVALID);
+        }
+        match.setStatus(MatchStatus.LIVE);
+        Player servePlayer = playerRepository.findById(request.getServePlayerId())
+                        .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_FOUND));
+        Player receivePlayer = playerRepository.findById(request.getReceivePlayerId())
+                        .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_PLAYER_NOT_FOUND));
+        match.setServePlayer(servePlayer);
+        match.setReceivePlayer(receivePlayer);
+        match.setStartTime(Instant.now());
+    }
+
+
+    @Override
+    @Transactional
+    public void addPoint(AddPointRequestDto request) {
+        Match match = matchRepository.findById(request.getMatchId())
+                .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_MATCH_NOT_FOUND));
+
+        if (!match.getStatus().equals(MatchStatus.LIVE)) {
+            throw new BadRequestException(ErrorConstants.ERR_MATCH_INVALID);
+        }
+
+        PlayerPair playerPair1 = match.getPlayerPair1();
+        PlayerPair playerPair2 = match.getPlayerPair2();
+
+        Player receivePlayer = match.getReceivePlayer();
+        Player servePlayer = match.getServePlayer();
+
+        Integer score1Set1 = match.getScore1Set1();
+        Integer score2Set1 = match.getScore2Set1();
+        Integer score1Set2 = match.getScore1Set2();
+        Integer score2Set2 = match.getScore2Set2();
+        Integer score1Set3 = match.getScore1Set3();
+        Integer score2Set3 = match.getScore2Set3();
+
+        matchHistoryRepository.save(MatchHistory.builder()
+                .playerPair1(playerPair1)
+                .playerPair2(playerPair2)
+                .receivePlayer(receivePlayer)
+                .servePlayer(servePlayer)
+                .match(match)
+                .score1Set1(score1Set1)
+                .score2Set1(score2Set1)
+                .score1Set2(score1Set2)
+                .score2Set2(score2Set2)
+                .score1Set3(score1Set3)
+                .score2Set3(score2Set3)
+                .set(match.getSet())
+                .build());
+
+        Long receiveId = receivePlayer.getId();
+        Long serveId = servePlayer.getId();
+
+        Integer lastPairServe = 1;
+        if (playerPair2.getPlayer1().getId().equals(serveId) ||
+            (playerPair2.getPlayer2() != null && playerPair2.getPlayer2().getId().equals(serveId)))
+        {
+            lastPairServe = 2;
+        }
+        Integer lastScore = score1Set1;
+        if (match.getSet().equals(1)) {
+            lastScore = score1Set1;
+            if (lastPairServe.equals(2)) {
+                lastScore = score2Set1;
+            }
+        } else if (match.getSet().equals(2)) {
+            lastScore = score1Set2;
+            if (lastPairServe.equals(2)) {
+                lastScore = score2Set2;
+            }
+        } else if (match.getSet().equals(3)) {
+            lastScore = score1Set3;
+            if (lastPairServe.equals(2)) {
+                lastScore = match.getScore2Set3();
+            }
+        }
+
+        boolean lastScoreEven = lastScore % 2 == 0;
+
+        if (playerPair1.getPlayer2() != null && playerPair2.getPlayer2() != null) {
+            if (lastPairServe == 1 && request.getPlayerPairId().equals(playerPair1.getId()))
+            {
+                Long player1Id = playerPair2.getPlayer1().getId();
+
+                if (receivePlayer.getId().equals(player1Id)) {
+                    match.setReceivePlayer(playerPair2.getPlayer2());
+                } else {
+                    match.setReceivePlayer(playerPair2.getPlayer1());
+                }
+            }
+
+            if (lastPairServe == 2 && request.getPlayerPairId().equals(playerPair2.getId()))
+            {
+                Long player1Id = playerPair1.getPlayer1().getId();
+
+                if (receivePlayer.getId().equals(player1Id)) {
+                    match.setReceivePlayer(playerPair1.getPlayer2());
+                } else {
+                    match.setReceivePlayer(playerPair1.getPlayer1());
+                }
+            }
+
+            if (lastPairServe == 1 && request.getPlayerPairId().equals(playerPair2.getId()))
+            {
+                boolean isNewScoreEven = true;
+                if (match.getSet().equals(1)) {
+                    isNewScoreEven = score2Set1 % 2 != 0;
+                } else if (match.getSet().equals(2)) {
+                    isNewScoreEven = score2Set2 % 2 != 0;
+                } else {
+                    isNewScoreEven = match.getScore2Set3() % 2 != 0;
+                }
+
+                if (isNewScoreEven && lastScoreEven || !isNewScoreEven && !lastScoreEven) {
+                    match.setReceivePlayer(servePlayer);
+                    match.setServePlayer(receivePlayer);
+                } else {
+                    if (receivePlayer.getId().equals(playerPair2.getPlayer1().getId())) {
+                        match.setServePlayer(playerPair2.getPlayer2());
+                    } else {
+                        match.setServePlayer(playerPair2.getPlayer1());
+                    }
+
+                    if (servePlayer.getId().equals(playerPair1.getPlayer1().getId())) {
+                        match.setReceivePlayer(playerPair1.getPlayer2());
+                    } else {
+                        match.setReceivePlayer(playerPair1.getPlayer1());
+                    }
+                }
+            }
+
+            if (lastPairServe == 2 && request.getPlayerPairId().equals(playerPair1.getId()))
+            {
+                boolean isNewScoreOdd = true;
+                if (match.getSet().equals(1)) {
+                    isNewScoreOdd = score1Set1 % 2 != 0;
+                } else if (match.getSet().equals(2)) {
+                    isNewScoreOdd = score1Set2 % 2 != 0;
+                } else {
+                    isNewScoreOdd = score1Set3 % 2 != 0;
+                }
+
+                if (isNewScoreOdd && lastScoreEven) {
+                    match.setReceivePlayer(servePlayer);
+                    match.setServePlayer(receivePlayer);
+                } else {
+                    if (receivePlayer.getId().equals(playerPair1.getPlayer1().getId())) {
+                        match.setServePlayer(playerPair1.getPlayer2());
+                    } else {
+                        match.setServePlayer(playerPair1.getPlayer1());
+                    }
+
+                    if (servePlayer.getId().equals(playerPair2.getPlayer1().getId())) {
+                        match.setReceivePlayer(playerPair2.getPlayer2());
+                    } else {
+                        match.setReceivePlayer(playerPair2.getPlayer1());
+                    }
+                }
+            }
+        } else {
+            if (request.getPlayerPairId().equals(playerPair1.getPlayer1().getId())) {
+                match.setServePlayer(playerPair1.getPlayer1());
+                match.setReceivePlayer(playerPair2.getPlayer1());
+            } else {
+                match.setServePlayer(playerPair2.getPlayer1());
+                match.setReceivePlayer(playerPair1.getPlayer1());
+            }
+        }
+
+        if (match.getSet().equals(1)) {
+            if (request.getPlayerPairId().equals(playerPair1.getId()))
+            {
+                match.setScore1Set1(score1Set1 + 1);
+            } else {
+                match.setScore2Set1(score2Set1 + 1);
+            }
+        } else if (match.getSet().equals(2)) {
+            if (request.getPlayerPairId().equals(playerPair1.getId()))
+            {
+                match.setScore1Set2(score1Set2 + 1);
+            } else {
+                match.setScore2Set2(score2Set2 + 1);
+            }
+        } else if (match.getSet().equals(3)) {
+            if (request.getPlayerPairId().equals(playerPair1.getId()))
+            {
+                match.setScore1Set3(score1Set3 + 1);
+            } else {
+                match.setScore2Set3(match.getScore2Set3() + 1);
+            }
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public void endSet(Long id) {
+        Match match = matchRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_MATCH_NOT_FOUND));
+
+        if (!match.getStatus().equals(MatchStatus.LIVE)) {
+            throw new BadRequestException(ErrorConstants.ERR_MATCH_INVALID);
+        }
+
+        if (match.getSet() >= 3) {
+            throw new BadRequestException(ErrorConstants.ERR_MATCH_INVALID);
+        }
+
+        PlayerPair playerPair1 = match.getPlayerPair1();
+        PlayerPair playerPair2 = match.getPlayerPair2();
+
+        Player receivePlayer = match.getReceivePlayer();
+        Player servePlayer = match.getServePlayer();
+
+        Integer score1Set1 = match.getScore1Set1();
+        Integer score2Set1 = match.getScore2Set1();
+        Integer score1Set2 = match.getScore1Set2();
+        Integer score2Set2 = match.getScore2Set2();
+        Integer score1Set3 = match.getScore1Set3();
+        Integer score2Set3 = match.getScore2Set3();
+
+        matchHistoryRepository.save(MatchHistory.builder()
+                .playerPair1(playerPair1)
+                .playerPair2(playerPair2)
+                .receivePlayer(receivePlayer)
+                .servePlayer(servePlayer)
+                .match(match)
+                .score1Set1(score1Set1)
+                .score2Set1(score2Set1)
+                .score1Set2(score1Set2)
+                .score2Set2(score2Set2)
+                .score1Set3(score1Set3)
+                .score2Set3(score2Set3)
+                .set(match.getSet())
+                .build());
+
+
+        match.setSet(match.getSet() + 1);
+    }
+
+    @Override
+    @Transactional
+    public void undoMatch(Long id) {
+        Match match = matchRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_MATCH_NOT_FOUND));
+
+        if (!match.getStatus().equals(MatchStatus.LIVE)) {
+            throw new BadRequestException(ErrorConstants.ERR_MATCH_INVALID);
+        }
+
+        MatchHistory matchHistory = matchHistoryRepository.findFirstByMatchIdOrderByIdDesc(id)
+                .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_MATCH_HISTORY_NOT_FOUND));
+
+        match.setReceivePlayer(matchHistory.getReceivePlayer());
+        match.setServePlayer(matchHistory.getServePlayer());
+        match.setSet(matchHistory.getSet());
+        match.setScore1Set1(matchHistory.getScore1Set1());
+        match.setScore2Set1(matchHistory.getScore2Set1());
+        match.setScore1Set2(matchHistory.getScore1Set2());
+        match.setScore2Set2(matchHistory.getScore2Set2());
+        match.setScore1Set3(matchHistory.getScore1Set3());
+        match.setScore2Set3(matchHistory.getScore2Set3());
+        matchHistoryRepository.deleteById(matchHistory.getId());
+    }
+
+    @Override
+    @Transactional
+    public void endMatch(EndMatchRequestDto request) {
+        Match match = matchRepository.findById(request.getMatchId())
+                .orElseThrow(() -> new BadRequestException(ErrorConstants.ERR_MATCH_NOT_FOUND));
+
+        if (!match.getStatus().equals(MatchStatus.LIVE)) {
+            throw new BadRequestException(ErrorConstants.ERR_MATCH_INVALID);
+        }
+
+        match.setStatus(MatchStatus.END);
+
+        PlayerPair winner = match.getPlayerPair1();
+        if (!request.getPlayerPairWinId().equals(winner.getId()))
+        {
+            winner = match.getPlayerPair2();
+        }
+        match.setWinner(winner);
+        match.setEndTime(Instant.now());
+    }
+
+    @Override
+    @Transactional
+    public TourDataSummaryResponseDto summaryData(Long id)
+    {
+        List<Match> matches = matchRepository.findAllByTourIdAndStatus(id, MatchStatus.END);
+
+        Map<Long, Integer> teamTotalPoints = new HashMap<>();
+        Map<Long, Integer> teamTotalWins = new HashMap<>();
+
+        Map<Long, Integer> singleMalePoints = new HashMap<>();
+        Map<Long, Integer> singleMaleWins = new HashMap<>();
+
+        Map<Long, Integer> singleFemalePoints = new HashMap<>();
+        Map<Long, Integer> singleFemaleWins = new HashMap<>();
+
+        Map<Long, Integer> doubleMalePoints = new HashMap<>();
+        Map<Long, Integer> doubleMaleWins = new HashMap<>();
+
+        Map<Long, Integer> doubleFemalePoints = new HashMap<>();
+        Map<Long, Integer> doubleFemaleWins = new HashMap<>();
+
+        Map<Long, Integer> mixPoints = new HashMap<>();
+        Map<Long, Integer> mixWins = new HashMap<>();
+
+        for (Match match : matches) {
+            if (match.getPlayerPair1() != null) {
+                Long pairId = match.getPlayerPair1().getId();
+                PlayerPairType type = match.getPlayerPair1().getType();
+                Long teamId = match.getPlayerPair1().getTeam().getId();
+
+                if (type.equals(PlayerPairType.SINGLE_MALE)) {
+                    calculatePairData(teamTotalPoints, teamTotalWins, singleMalePoints, singleMaleWins, match, pairId, teamId);
+                }
+                if (type.equals(PlayerPairType.SINGLE_FEMALE)) {
+                    calculatePairData(teamTotalPoints, teamTotalWins, singleFemalePoints, singleFemaleWins, match, pairId, teamId);
+                }
+                if (type.equals(PlayerPairType.DOUBLE_MALE)) {
+                    calculatePairData(teamTotalPoints, teamTotalWins, doubleMalePoints, doubleMaleWins, match, pairId, teamId);
+                }
+                if (type.equals(PlayerPairType.DOUBLE_FEMALE)) {
+                    calculatePairData(teamTotalPoints, teamTotalWins, doubleFemalePoints, doubleFemaleWins, match, pairId, teamId);
+                }
+                if (type.equals(PlayerPairType.MIX)) {
+                    calculatePairData(teamTotalPoints, teamTotalWins, mixPoints, mixWins, match, pairId, teamId);
+                }
+            }
+        }
+
+        return TourDataSummaryResponseDto.builder()
+                .teamTotalPoints(teamTotalPoints)
+                .teamTotalWins(teamTotalWins)
+                .singMalePoints(singleMalePoints)
+                .singleMaleWins(singleMaleWins)
+                .singleFemalePoints(singleFemalePoints)
+                .singleFemaleWins(singleFemaleWins)
+                .doubleMalePoints(doubleMalePoints)
+                .doubleMaleWins(doubleMaleWins)
+                .doubleFemalePoints(doubleFemalePoints)
+                .doubleFemaleWins(doubleFemaleWins)
+                .mixPoints(mixPoints)
+                .mixWins(mixWins)
+                .build();
+    }
+
+    private void calculatePairData(Map<Long, Integer> teamTotalPoints,
+                                   Map<Long, Integer> teamTotalWins,
+                                   Map<Long, Integer> pairPoints,
+                                   Map<Long, Integer> pairWins,
+                                   Match match,
+                                   Long pairId,
+                                   Long teamId)
+    {
+        pairPoints.compute(pairId, (k, v) -> {
+            int totalPoints = match.getScore1Set1() + match.getScore1Set2() + match.getScore1Set3();
+            if (v == null) {
+                return totalPoints;
+            }
+            return v + (totalPoints);
+        });
+        teamTotalPoints.compute(teamId, (k, v) -> {
+            int totalPoints = match.getScore1Set1() + match.getScore1Set2() + match.getScore1Set3();
+            if (v == null) {
+                return totalPoints;
+            }
+            return v + (totalPoints);
+        });
+
+        if (match.getWinner().getId().equals(pairId)) {
+            pairWins.compute(pairId, (k, v) -> {
+                if (v == null) {
+                    return 1;
+                }
+                return v + 1;
+            });
+            teamTotalWins.compute(teamId, (k, v) -> {
+                if (v == null) {
+                    return 1;
+                }
+                return v + 1;
+            });
+        }
     }
 
 }
